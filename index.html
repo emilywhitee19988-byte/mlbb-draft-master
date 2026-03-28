@@ -1650,15 +1650,30 @@
       
       const tier = getTier(getWinRate(hero)).toUpperCase();
       const modeName = currentQueueType === 'solo' ? 'Solo Queue' : 'Pro Play';
+      const build = getHeroBuild(heroName);
+      const counters = COUNTERS[heroName] || [];
+      
+      // Split counters: first 4 are role-specific (lane matchups), rest are general
+      const roleCounters = counters.slice(0, 4);
+      const generalCounters = counters.slice(4, 12);
       
       alert(`${hero.name} (${modeName})
 ━━━━━━━━━━━━━━━━━
+📊 STATS
 Role: ${hero.role}
 Tier: ${tier}
-
 Win Rate: ${getWinRate(hero)}%
 Pick Rate: ${getPickRate(hero)}%
-Ban Rate: ${getBanRate(hero)}%`);
+Ban Rate: ${getBanRate(hero)}%
+
+🛡️ PRO BUILD (Zathong 2026)
+${build.join(' → ')}
+
+⚔️ LANE COUNTERS (${hero.role})
+${roleCounters.length > 0 ? roleCounters.join(', ') : 'No specific counters'}
+
+🎯 GENERAL COUNTERS
+${generalCounters.length > 0 ? generalCounters.join(', ') : 'No general counters'}`);
     }
 
     function switchTab(tabName) {
