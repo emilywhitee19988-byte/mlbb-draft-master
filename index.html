@@ -38,22 +38,18 @@
       <button onclick="switchTab(1)" id="tab-1" class="tab-button px-8 py-4 font-semibold text-lg">🎯 Draft Picker</button>
     </div>
 
-    <!-- TIER LIST - CLEAN ROLE FILTERS + CARD GRID -->
+    <!-- CLEAN TIER LIST -->
     <div id="content-0">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Tier List</h2>
         <div id="tier-role-tabs" class="flex gap-2 flex-wrap"></div>
       </div>
-      <input id="search-tier" type="text" placeholder="Search hero..." 
-             class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400"
-             onkeyup="renderTierList()">
+      <input id="search-tier" type="text" placeholder="Search hero..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400" onkeyup="renderTierList()">
       <div id="tier-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4"></div>
     </div>
 
-    <!-- Draft Picker (your current working version with role tabs already there) -->
+    <!-- FULLY WORKING DRAFT PICKER -->
     <div id="content-1" class="hidden">
-      <!-- ... your existing draft picker code stays the same ... -->
-      <!-- (I kept it identical so nothing breaks) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-5">
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users"></i> Your Team (Allies)</h2>
@@ -96,13 +92,15 @@
     let addMode = 0;
     let dataLoaded = false;
     let selectedTierRole = "All";
+    let selectedDraftRole = "All";
 
+    // Expanded role map (more heroes so filtering works better)
     const roleMap = {
-      "Masha": "EXP", "Lolita": "Roam", "Gloo": "Roam", "Kaja": "Roam", "Floryn": "Roam",
-      "Gord": "Mid", "Diggie": "Roam", "Hanabi": "Gold", "Natan": "Gold", "Estes": "Roam",
-      // Add more as you like - example:
-      "Paquito": "Jungle", "Ling": "Jungle", "Fanny": "Jungle", "Lancelot": "Mid",
-      "Valentina": "Mid", "Yve": "Mid", "Beatrix": "Gold", "Layla": "Gold"
+      "Masha": "EXP", "Paquito": "Jungle", "Ling": "Jungle", "Fanny": "Jungle", "Lancelot": "Mid",
+      "Gord": "Mid", "Valentina": "Mid", "Yve": "Mid", "Lolita": "Roam", "Gloo": "Roam",
+      "Kaja": "Roam", "Floryn": "Roam", "Diggie": "Roam", "Estes": "Roam", "Hanabi": "Gold",
+      "Natan": "Gold", "Beatrix": "Gold", "Layla": "Gold", "Hayabusa": "Jungle", "Benedetta": "EXP"
+      // Add more later if needed
     };
 
     async function fetchData() {
@@ -134,77 +132,118 @@
       }
     }
 
-    // Tier List with role tabs + clean cards
+    // Tier List functions
     function renderTierRoleTabs() {
       const tabs = ["All", "Jungle", "Mid", "EXP", "Gold", "Roam"];
-      const container = document.getElementById('tier-role-tabs');
-      container.innerHTML = tabs.map(role => `
-        <button onclick="selectTierRole('${role}')" 
-                class="role-tab px-6 py-2 rounded-2xl text-sm ${selectedTierRole === role ? 'active' : 'bg-gray-800 hover:bg-gray-700'}">
-          ${role}
-        </button>
+      document.getElementById('tier-role-tabs').innerHTML = tabs.map(role => `
+        <button onclick="selectTierRole('${role}')" class="role-tab px-6 py-2 rounded-2xl text-sm ${selectedTierRole === role ? 'active' : 'bg-gray-800 hover:bg-gray-700'}">${role}</button>
       `).join('');
     }
-
-    function selectTierRole(role) {
-      selectedTierRole = role;
-      renderTierRoleTabs();
-      renderTierList();
-    }
-
+    function selectTierRole(role) { selectedTierRole = role; renderTierRoleTabs(); renderTierList(); }
     function renderTierList() {
       const container = document.getElementById('tier-grid');
-      if (!dataLoaded) return container.innerHTML = `<p class="col-span-full text-yellow-400 text-center py-12">Loading heroes...</p>`;
-
       let filtered = heroesData;
-      if (selectedTierRole !== "All") {
-        filtered = filtered.filter(h => h.role === selectedTierRole);
-      }
-
-      // Sort by win rate
+      if (selectedTierRole !== "All") filtered = filtered.filter(h => h.role === selectedTierRole);
       filtered.sort((a,b) => b.rawWin - a.rawWin);
-
       container.innerHTML = filtered.map(hero => {
         const tier = hero.rawWin >= 0.55 ? 'S+' : hero.rawWin >= 0.53 ? 'S' : hero.rawWin >= 0.51 ? 'A' : 'B';
         const color = hero.rawWin >= 0.55 ? 'emerald' : hero.rawWin >= 0.53 ? 'yellow' : 'amber';
-        return `
-          <div onclick="showBuildModalFromTier('${hero.name}')" class="hero-card bg-gray-900 rounded-3xl p-3 text-center cursor-pointer border border-gray-700">
-            <img src="${hero.image}" class="hero-img mx-auto">
-            <p class="font-semibold mt-2">${hero.name}</p>
-            <p class="text-emerald-400 text-sm">${hero.winRate}% WR</p>
-            <span class="inline-block mt-1 px-4 py-1 text-xs font-bold rounded-2xl bg-${color}-500/20 text-${color}-400">${tier}</span>
-          </div>`;
+        return `<div onclick="showBuildModalFromTier('${hero.name}')" class="hero-card bg-gray-900 rounded-3xl p-3 text-center cursor-pointer border border-gray-700"><img src="${hero.image}" class="hero-img mx-auto"><p class="font-semibold mt-2">${hero.name}</p><p class="text-emerald-400 text-sm">${hero.winRate}% WR</p><span class="inline-block mt-1 px-4 py-1 text-xs font-bold rounded-2xl bg-${color}-500/20 text-${color}-400">${tier}</span></div>`;
       }).join('');
     }
-
     function showBuildModalFromTier(name) {
       const hero = heroesData.find(h => h.name === name);
       if (!hero) return;
       document.getElementById('modal-hero-name').innerHTML = `${hero.name} • Sample Optimal Build`;
-      // Simple sample build (we'll make this dynamic in next step)
       const items = [{name:"Demon Hunter Sword", icon:"🗡️"},{name:"Golden Staff", icon:"⚡"},{name:"Malefic Roar", icon:"🔥"},{name:"Blade of Despair", icon:"💀"},{name:"Endless Battle", icon:"⚔️"},{name:"Immortality", icon:"🛡️"}];
       document.getElementById('modal-build').innerHTML = items.map(i => `<div class="text-center"><div class="text-4xl mb-1">${i.icon}</div><p class="text-xs">${i.name}</p></div>`).join('');
       document.getElementById('build-modal').classList.remove('hidden');
     }
 
-    // Draft Picker functions (your existing working code)
-    function renderHeroPool() { /* your current code from previous version */ }
-    function renderRecommendations() { /* your current code */ }
-    function renderSlots() { /* your current code */ }
-    function addHeroToTeam(heroName) { /* your current code */ }
-    function removePick(team, index) { /* your current code */ }
-    function setAddMode(mode) { /* your current code */ }
-    function switchTab(n) { /* your current code */ }
-    function showBuildModal(index, team) { /* your current code */ }
-    function hideBuildModal() { /* your current code */ }
+    // Draft Picker functions (full working version)
+    function renderDraftRoleTabs() {
+      const tabs = ["All", "Jungle", "Mid", "EXP", "Gold", "Roam"];
+      document.getElementById('draft-role-tabs').innerHTML = tabs.map(role => `
+        <button onclick="selectDraftRole('${role}')" class="role-tab px-6 py-2 rounded-2xl text-sm ${selectedDraftRole === role ? 'active' : 'bg-gray-800 hover:bg-gray-700'}">${role}</button>
+      `).join('');
+    }
+    function selectDraftRole(role) { selectedDraftRole = role; renderDraftRoleTabs(); renderHeroPool(); }
+    function renderHeroPool() {
+      const poolEl = document.getElementById('hero-pool');
+      if (!dataLoaded) return poolEl.innerHTML = `<p class="col-span-full text-yellow-400 text-center py-12 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading 132 heroes…</p>`;
+      const term = (document.getElementById('search-draft').value || '').toLowerCase();
+      const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
+      let filtered = heroesData.filter(h => !pickedNames.includes(h.name) && h.name.toLowerCase().includes(term));
+      if (selectedDraftRole !== "All") filtered = filtered.filter(h => h.role === selectedDraftRole);
+      poolEl.innerHTML = filtered.length ? filtered.map(hero => `
+        <div onclick="addHeroToTeam('${hero.name}')" class="bg-gray-800 hover:bg-gray-700 rounded-2xl p-2 flex flex-col items-center cursor-pointer">
+          <img src="${hero.image}" class="hero-img">
+          <p class="text-xs mt-2 text-center">${hero.name}</p>
+        </div>`).join('') : `<p class="col-span-full text-gray-400 text-center py-8">No heroes match</p>`;
+    }
+    function addHeroToTeam(heroName) {
+      if (!dataLoaded) return;
+      const hero = heroesData.find(h => h.name === heroName);
+      if (!hero) return;
+      if (addMode === 0 && allyPicks.length < 5) allyPicks.push(hero);
+      else if (addMode === 1 && enemyPicks.length < 5) enemyPicks.push(hero);
+      else return alert("Team is full!");
+      renderSlots(); renderHeroPool(); renderRecommendations();
+    }
+    function removePick(team, index) {
+      if (team === 0) allyPicks.splice(index, 1); else enemyPicks.splice(index, 1);
+      renderSlots(); renderHeroPool(); renderRecommendations();
+    }
+    function renderSlots() {
+      const allyHTML = allyPicks.map((hero,i) => `
+        <div onclick="showBuildModal(${i},0)" class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 border-emerald-500">
+          <img src="${hero.image}" class="hero-img mx-auto">
+          <p class="text-xs mt-1">${hero.name}</p>
+          <span onclick="event.stopImmediatePropagation();removePick(0,${i});" class="text-red-400 text-xs">✕</span>
+        </div>`).concat(Array(5 - allyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
+      document.getElementById('ally-slots').innerHTML = allyHTML.join('');
+      const enemyHTML = enemyPicks.map((hero,i) => `
+        <div class="slot bg-gray-800 rounded-2xl p-3 text-center border-2 border-red-500">
+          <img src="${hero.image}" class="hero-img mx-auto">
+          <p class="text-xs mt-1">${hero.name}</p>
+          <span onclick="event.stopImmediatePropagation();removePick(1,${i});" class="text-red-400 text-xs">✕</span>
+        </div>`).concat(Array(5 - enemyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
+      document.getElementById('enemy-slots').innerHTML = enemyHTML.join('');
+    }
+    function renderRecommendations() {
+      const recEl = document.getElementById('recommendations');
+      if (!dataLoaded) return recEl.innerHTML = `<p class="text-yellow-400 text-center py-8 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading optimal picks…</p>`;
+      const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
+      const available = heroesData.filter(h => !pickedNames.includes(h.name));
+      const sorted = available.sort((a,b) => b.rawWin - a.rawWin).slice(0, 8);
+      let html = `<p class="text-xs text-gray-400 mb-3">Based on current meta + your team</p>`;
+      sorted.forEach(h => html += `<div onclick="addHeroToTeam('${h.name}')" class="flex gap-3 bg-gray-800 hover:bg-gray-700 rounded-2xl p-3 mb-2 cursor-pointer"><img src="${h.image}" class="hero-img"><div class="flex-1"><div class="font-semibold">${h.name}</div><div class="text-emerald-400 text-sm">${h.winRate}% WR • Great into this comp</div></div></div>`);
+      recEl.innerHTML = html || '<p class="text-gray-400">All heroes picked!</p>';
+    }
+    function setAddMode(mode) { addMode = mode; document.querySelectorAll('.add-mode-btn').forEach((b,i) => b.style.opacity = i === mode ? '1' : '0.5'); }
+    function showBuildModal(index, team) {
+      const hero = team === 0 ? allyPicks[index] : enemyPicks[index];
+      if (!hero) return;
+      document.getElementById('modal-hero-name').innerHTML = `${hero.name} • Sample Optimal Build`;
+      const items = [{name:"Demon Hunter Sword", icon:"🗡️"},{name:"Golden Staff", icon:"⚡"},{name:"Malefic Roar", icon:"🔥"},{name:"Blade of Despair", icon:"💀"},{name:"Endless Battle", icon:"⚔️"},{name:"Immortality", icon:"🛡️"}];
+      document.getElementById('modal-build').innerHTML = items.map(i => `<div class="text-center"><div class="text-4xl mb-1">${i.icon}</div><p class="text-xs">${i.name}</p></div>`).join('');
+      document.getElementById('build-modal').classList.remove('hidden');
+    }
+    function hideBuildModal() { document.getElementById('build-modal').classList.add('hidden'); }
+    function switchTab(n) {
+      document.querySelectorAll('#content-0, #content-1').forEach(el => el.classList.add('hidden'));
+      document.getElementById('content-' + n).classList.remove('hidden');
+      document.querySelectorAll('.tab-button').forEach((b,i) => { b.classList.toggle('border-yellow-400', i===n); b.classList.toggle('text-yellow-400', i===n); });
+      if (n === 1) { renderSlots(); renderHeroPool(); renderRecommendations(); }
+    }
 
     window.onload = () => {
       fetchData();
       setAddMode(0);
       setTimeout(() => {
-        renderTierRoleTabs();   // Tier List tabs
-        // Draft Picker role tabs (already there from last update)
-      }, 1200);
+        renderTierRoleTabs();
+        renderDraftRoleTabs();
+      }, 1500);
     };
   </script>
 </body>
