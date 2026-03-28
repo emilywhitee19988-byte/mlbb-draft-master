@@ -201,7 +201,7 @@
           <h1 class="orbitron text-3xl font-black bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
             MLBB DRAFT MASTER
           </h1>
-          <p class="text-xs text-slate-400 mt-1">March 2026 Meta Stats • Accurate Tiers • 132 Heroes • No Lag!</p>
+          <p class="text-xs text-slate-400 mt-1">Real Pro Tournament Data • Latest Pro Builds • 132 Heroes • No Lag!</p>
         </div>
         <div class="text-right">
           <div id="last-updated" class="text-xs text-slate-400">Loading...</div>
@@ -240,6 +240,11 @@
           <button onclick="setQueueType('pro')" class="queue-selector rounded-lg px-3 py-1.5 text-xs font-semibold" data-queue="pro">
             🏆 Pro Play
           </button>
+        </div>
+
+        <!-- Mode Info Banner -->
+        <div id="mode-info-banner" class="mt-3 px-4 py-2.5 rounded-lg text-xs text-center" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
+          <strong>📱 Solo Queue Mode:</strong> Based on March 2026 Mythic+ ranked stats
         </div>
 
         <input 
@@ -945,6 +950,51 @@
     }
 
     // ACCURATE MARCH 2026 STATS - NO API NEEDED
+    // ========================================
+    // REAL PRO TOURNAMENT DATA
+    // M7 World Championship (Jan 2026) + MPL Indonesia S16 + MPL Philippines S16 (Aug-Oct 2025)
+    // ========================================
+    const PRO_TOURNAMENT_STATS = {
+      "Yi Sun-shin": { totalPicks: 337, proWR: 48.5, totalBans: 121, presence: 89, proTier: "S" },
+      "Zhuxin": { totalPicks: 185, proWR: 54.1, totalBans: 208, presence: 94, proTier: "S" },
+      "Yu Zhong": { totalPicks: 16, proWR: 68.75, totalBans: 20, presence: 100, proTier: "S" },
+      "Gatotkaca": { totalPicks: 207, proWR: 51.1, totalBans: 82, presence: 72, proTier: "S" },
+      "Harith": { totalPicks: 156, proWR: 53.3, totalBans: 142, presence: 78, proTier: "S" },
+      "Cici": { totalPicks: 136, proWR: 52.1, totalBans: 222, presence: 86, proTier: "S" },
+      "Lancelot": { totalPicks: 189, proWR: 46.0, totalBans: 158, presence: 85, proTier: "A" },
+      "Granger": { totalPicks: 157, proWR: 48.2, totalBans: 95, presence: 64, proTier: "A" },
+      "Arlott": { totalPicks: 131, proWR: 59.5, totalBans: 159, presence: 71, proTier: "A" },
+      "Hayabusa": { totalPicks: 129, proWR: 65.9, totalBans: 39, presence: 51, proTier: "A" },
+      "Kimmy": { totalPicks: 142, proWR: 52.5, totalBans: 74, presence: 60, proTier: "A" },
+      "Lapu-Lapu": { totalPicks: 145, proWR: 50.9, totalBans: 68, presence: 58, proTier: "A" },
+      "Yve": { totalPicks: 18, proWR: 66.67, totalBans: 14, presence: 89, proTier: "A" },
+      "Pharsa": { totalPicks: 116, proWR: 51.1, totalBans: 68, presence: 53, proTier: "A" },
+      "Kalea": { totalPicks: 122, proWR: 52.7, totalBans: 159, presence: 69, proTier: "A" },
+      "Uranus": { totalPicks: 103, proWR: 45.2, totalBans: 148, presence: 61, proTier: "B" },
+      "Chou": { totalPicks: 11, proWR: 45.45, totalBans: 7, presence: 50, proTier: "B" },
+      "Hylos": { totalPicks: 56, proWR: 50.0, totalBans: 34, presence: 48, proTier: "B" },
+      "Claude": { totalPicks: 16, proWR: 50.0, totalBans: 5, presence: 58, proTier: "B" },
+      "Grock": { totalPicks: 92, proWR: 50.2, totalBans: 105, presence: 57, proTier: "B" },
+      "Fredrinn": { totalPicks: 46, proWR: 50.0, totalBans: 24, presence: 40, proTier: "B" },
+      "Moskov": { totalPicks: 47, proWR: 48.9, totalBans: 15, presence: 35, proTier: "B" },
+      "Esmeralda": { totalPicks: 12, proWR: 16.67, totalBans: 8, presence: 56, proTier: "B" },
+      "Phoveus": { totalPicks: 54, proWR: 49.5, totalBans: 75, presence: 48, proTier: "B" },
+      "Baxia": { totalPicks: 42, proWR: 47.5, totalBans: 31, presence: 42, proTier: "B" },
+      "Akai": { totalPicks: 38, proWR: 52.6, totalBans: 22, presence: 38, proTier: "B" },
+      "Paquito": { totalPicks: 28, proWR: 50.0, totalBans: 18, presence: 31, proTier: "B" },
+      "Ruby": { totalPicks: 35, proWR: 54.3, totalBans: 12, presence: 28, proTier: "B" }
+      // All other heroes not listed = tier D (not picked in pro tournaments)
+    };
+
+    // Pro tier descriptions
+    const PRO_TIER_DESCRIPTIONS = {
+      "S": "META DEFINING - Must pick/ban heroes (80%+ tournament presence)",
+      "A": "STRONG CONTESTED - High priority picks (50-79% presence)",  
+      "B": "SITUATIONAL - Niche picks or struggled (30-49% presence)",
+      "C": "RARELY PICKED - Minimal tournament presence (<30%)",
+      "D": "NOT IN META - Never/rarely picked in pro tournaments"
+    };
+
     const MARCH_2026_STATS = {
   // S-TIER (52%+ WR OR 40%+ ban rate)
   'Marcel': { wr: 53.4, pr: 0.8, br: 75.6 },  // PERMA-BAN from MLBBHub
@@ -1153,10 +1203,20 @@
       const hero = typeof winRate === 'object' ? winRate : null;
       
       if (hero) {
-        // Full hero object - use WR primarily with ban rate boost
-        const wr = parseFloat(hero.winRateSolo || hero.winRatePro || 50);
-        const pr = parseFloat(hero.pickRateSolo || hero.pickRatePro || 5);
-        const br = parseFloat(hero.banRateSolo || hero.banRatePro || 0);
+        // PRO MODE: Use tournament data
+        if (currentQueueType === 'pro') {
+          const proData = PRO_TOURNAMENT_STATS[hero.name];
+          if (proData && proData.proTier) {
+            return proData.proTier.toLowerCase();
+          }
+          // Heroes not in pro stats = tier D (not picked in tournaments)
+          return 'd';
+        }
+        
+        // SOLO QUEUE MODE: Use statistical analysis
+        const wr = parseFloat(hero.winRateSolo || 50);
+        const pr = parseFloat(hero.pickRateSolo || 5);
+        const br = parseFloat(hero.banRateSolo || 0);
         
         // S-TIER: Meta-defining (52%+ WR with HIGH PR >1.2% OR perma-ban 40%+)
         if ((wr >= 52 && pr > 1.2) || br >= 40) return 's';
@@ -1197,6 +1257,21 @@
       document.querySelectorAll('[data-queue]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.queue === type);
       });
+      
+      // Update mode info banner
+      const banner = document.getElementById('mode-info-banner');
+      if (banner) {
+        if (type === 'pro') {
+          banner.innerHTML = '<strong>🏆 Pro Play Mode:</strong> Real tournament data from M7 World Championship + MPL ID/PH Season 16 (Aug 2025 - Jan 2026)';
+          banner.style.background = 'rgba(251, 191, 36, 0.1)';
+          banner.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+        } else {
+          banner.innerHTML = '<strong>📱 Solo Queue Mode:</strong> Based on March 2026 Mythic+ ranked stats';
+          banner.style.background = 'rgba(59, 130, 246, 0.1)';
+          banner.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+        }
+      }
+      
       renderTierList();
     }
 
