@@ -339,6 +339,17 @@
         </div>
       </div>
 
+      <!-- COUNTER-PICK ASSISTANT -->
+      <div id="counter-pick-assistant" class="mb-6 hidden">
+        <div class="bg-gradient-to-br from-amber-900/30 to-orange-950/30 rounded-xl p-4 border-2 border-amber-500/30">
+          <h2 class="text-xl font-bold text-amber-400 mb-3 flex items-center gap-2">
+            <span>🎯</span> Counter-Pick Assistant
+            <span class="text-xs font-normal text-slate-400 ml-auto">Real-time suggestions</span>
+          </h2>
+          <div id="counter-suggestions" class="space-y-3"></div>
+        </div>
+      </div>
+
       <!-- TEAM BUILDS SECTION -->
       <div id="team-builds-section" class="hidden mb-6">
         <div class="bg-gradient-to-br from-purple-900/30 to-purple-950/30 rounded-xl p-4 border-2 border-purple-500/30">
@@ -1432,6 +1443,95 @@
           `}
         </div>
       `).join('');
+      
+      // Update counter-pick assistant
+      updateCounterPickAssistant();
+    }
+
+    function updateCounterPickAssistant() {
+      const assistantPanel = document.getElementById('counter-pick-assistant');
+      const suggestionsContainer = document.getElementById('counter-suggestions');
+      
+      // Get enemy picks that need counters
+      const enemyHeroes = enemyPicks.filter(Boolean);
+      
+      if (enemyHeroes.length === 0) {
+        assistantPanel.classList.add('hidden');
+        return;
+      }
+      
+      assistantPanel.classList.remove('hidden');
+      
+      // Generate counter suggestions for each enemy hero
+      const suggestions = [];
+      
+      enemyHeroes.forEach(enemyHero => {
+        const counterData = getCounterSuggestions(enemyHero.name);
+        if (counterData.counters.length > 0) {
+          suggestions.push({
+            target: enemyHero,
+            counters: counterData.counters.slice(0, 3) // Top 3 counters
+          });
+        }
+      });
+      
+      if (suggestions.length === 0) {
+        suggestionsContainer.innerHTML = '<p class="text-slate-400 text-sm">No counter data available</p>';
+        return;
+      }
+      
+      // Render counter suggestions
+      suggestionsContainer.innerHTML = suggestions.map(({target, counters}) => `
+        <div class="bg-slate-900/50 rounded-lg p-3 border border-slate-700">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="hero-avatar hero-avatar-sm ${getRoleClass(target.role)}">${getHeroInitials(target.name)}</div>
+            <div class="flex-1">
+              <p class="font-bold text-sm">${target.name}</p>
+              <p class="text-xs text-slate-400">Enemy ${target.role}</p>
+            </div>
+            <span class="text-xs text-red-400">⚠️ Threat</span>
+          </div>
+          <div class="pl-2 border-l-2 border-amber-500/30">
+            <p class="text-xs text-amber-400 font-semibold mb-1.5">Best Counters:</p>
+            <div class="space-y-1">
+              ${counters.map((counter, idx) => {
+                const alreadyPicked = allyPicks.some(h => h && h.name === counter.name);
+                const effectiveness = idx === 0 ? '⭐⭐⭐' : idx === 1 ? '⭐⭐' : '⭐';
+                return `
+                  <div class="flex items-center gap-2 ${alreadyPicked ? 'opacity-50' : ''}">
+                    <div class="hero-avatar" style="width: 24px; height: 24px; font-size: 0.65rem; ${getRoleClass(counter.role).replace('hero-avatar', '')}">${getHeroInitials(counter.name)}</div>
+                    <span class="text-xs flex-1">${counter.name}</span>
+                    <span class="text-xs text-amber-400">${effectiveness}</span>
+                    ${alreadyPicked ? '<span class="text-xs text-green-400">✓ Picked</span>' : 
+                      `<button onclick="selectHeroForDraft('${counter.name.replace(/'/g, "\\'")}', 'ally')" class="text-xs text-blue-400 hover:text-blue-300">+ Pick</button>`}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function getCounterSuggestions(heroName) {
+      // Find heroes that counter the target hero
+      const counters = [];
+      
+      allHeroes.forEach(hero => {
+        if (hero.counters && hero.counters.includes(heroName)) {
+          // This hero counters the target
+          counters.push({
+            name: hero.name,
+            role: hero.role,
+            winRate: getWinRate(hero)
+          });
+        }
+      });
+      
+      // Sort by win rate
+      counters.sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate));
+      
+      return { counters };
     }
 
     function renderDraftPool() {
@@ -1464,11 +1564,14 @@
       }).join('');
     }
 
-    function selectHeroForDraft(heroName) {
+    function selectHeroForDraft(heroName, forceTeam = null) {
       const hero = allHeroes.find(h => h.name === heroName);
       if (!hero) return;
       
-      if (confirm(`Add ${hero.name} to:\nOK = Your Team\nCancel = Enemy Team`)) {
+      if (forceTeam) {
+        // Direct selection (from counter-pick assistant)
+        addToTeam(forceTeam, hero);
+      } else if (confirm(`Add ${hero.name} to:\nOK = Your Team\nCancel = Enemy Team`)) {
         addToTeam('ally', hero);
       } else {
         addToTeam('enemy', hero);
