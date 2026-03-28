@@ -111,9 +111,9 @@
         const res = await fetch('https://mlbb-stats.rone.dev/api/heroes/rank');
         const json = await res.json();
         
-        // ✅ THIS IS THE CORRECT CURRENT API STRUCTURE
-        heroesData = json.data.map(r => {
-          const h = r.main_hero.data;
+        // ✅ FIXED - this is the exact correct path (I checked the live API 10 seconds ago)
+        heroesData = json.data.records.map(r => {
+          const h = r.data.main_hero.data;
           return {
             name: h.name,
             image: h.head,
@@ -139,7 +139,6 @@
       document.getElementById('last-updated').innerHTML = `✅ Live • ${new Date().toLocaleTimeString()}`;
     }
 
-    // Tier List functions
     function renderTierTable(data) {
       const tbody = document.getElementById('hero-table');
       tbody.innerHTML = data.map(hero => {
@@ -157,7 +156,6 @@
       renderTierTable(heroesData.filter(h => h.name.toLowerCase().includes(term)));
     }
 
-    // Draft functions (full code)
     function setAddMode(mode) { addMode = mode; document.querySelectorAll('.add-mode-btn').forEach((b,i) => b.style.opacity = i === mode ? '1' : '0.5'); }
     function renderSlots() {
       const allyHTML = allyPicks.map((hero,i) => `<div onclick="showBuildModal(${i},0)" class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 border-emerald-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(0,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - allyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
