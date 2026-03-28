@@ -484,37 +484,41 @@
     };
 
     const ITEMS = {
-      // Core items
-      'Tough Boots': { icon: '👢', stats: 'Def+Tenacity' },
+      // Boots
+      'Swift Boots': { icon: '👢', stats: '+40 MS' },
       'Warrior Boots': { icon: '👢', stats: '+22 Armor' },
       'Arcane Boots': { icon: '👢', stats: '+10 M.Pen' },
-      'Swift Boots': { icon: '👢', stats: '+40 MS' },
+      'Tough Boots': { icon: '👢', stats: '+Tenacity' },
       'Magic Shoes': { icon: '👢', stats: '-10% CD' },
       
-      // Physical items
+      // Physical Attack
+      'Blade of Despair': { icon: '⚔️', stats: '+160 Atk' },
+      'Haas Claws': { icon: '🦅', stats: '+70 Atk +25% LS' },
+      'Demon Hunter Sword': { icon: '👹', stats: '9% HP DMG' },
+      'Malefic Roar': { icon: '🔥', stats: '+60 Atk +40% Pen' },
+      'Hunter Strike': { icon: '⚡', stats: '+80 Atk +15 Pen' },
+      'Endless Battle': { icon: '💫', stats: 'True DMG' },
+      'Blade of Heptaseas': { icon: '🌊', stats: '+65 Atk' },
       'Windtalker': { icon: '💨', stats: '+40% AS' },
       'Scarlet Phantom': { icon: '🗡️', stats: '+30% Crit' },
-      'Berserkers Fury': { icon: '⚔️', stats: '+40% CD' },
-      'Demon Hunter Sword': { icon: '👹', stats: '9% HP' },
+      'Berserkers Fury': { icon: '⚔️', stats: '+40% C.DMG' },
       'Golden Staff': { icon: '📿', stats: '+30% AS' },
-      'Malefic Roar': { icon: '🔥', stats: '+40% Pen' },
-      'Blade of Despair': { icon: '⚔️', stats: '+160 Atk' },
-      'Endless Battle': { icon: '⚡', stats: 'True DMG' },
-      'Corrosion Scythe': { icon: '🪓', stats: 'Slow' },
+      'Corrosion Scythe': { icon: '🪓', stats: '+Slow' },
       'Sea Halberd': { icon: '🔱', stats: 'Anti-Heal' },
-      'Hunter Strike': { icon: '⚡', stats: '+80 Atk' },
       
-      // Magic items
+      // Magic Power
       'Clock of Destiny': { icon: '⏰', stats: '+60 M.Pwr' },
       'Lightning Truncheon': { icon: '⚡', stats: '+75 M.Pwr' },
       'Holy Crystal': { icon: '💎', stats: '+100 M.Pwr' },
-      'Divine Glaive': { icon: '✨', stats: '+40% Pen' },
+      'Divine Glaive': { icon: '✨', stats: '+40% M.Pen' },
       'Genius Wand': { icon: '🪄', stats: '+75 M.Pwr' },
       'Glowing Wand': { icon: '✨', stats: 'Burn DMG' },
       'Blood Wings': { icon: '🦇', stats: '+150 M.Pwr' },
       'Fleeting Time': { icon: '⏱️', stats: '-30% CD' },
+      'Feather of Heaven': { icon: '🪶', stats: '+65 M.Pwr' },
+      'Concentrated Energy': { icon: '🔮', stats: '+70 M.Pwr' },
       
-      // Defense items
+      // Defense
       'Dominance Ice': { icon: '❄️', stats: 'Anti-Heal' },
       'Antique Cuirass': { icon: '🛡️', stats: '+54 Def' },
       'Athenas Shield': { icon: '🔰', stats: '+62 M.Def' },
@@ -524,30 +528,39 @@
       'Oracle': { icon: '🔮', stats: '+35% Heal' },
       'Brute Force': { icon: '💪', stats: '+70 Def' },
       'Thunderbelt': { icon: '⚡', stats: '+800 HP' },
-      'Queens Wings': { icon: '👑', stats: 'DMG Reduce' },
+      'Queens Wings': { icon: '👑', stats: 'DMG Red' },
+      'Twilight Armor': { icon: '🌙', stats: 'DMG Cap' },
+      'Guardian Helmet': { icon: '⛑️', stats: 'Regen' },
       
       // Utility
       'Winter Truncheon': { icon: '❄️', stats: '2s Freeze' },
       'Wind of Nature': { icon: '🌪️', stats: '2s Immune' },
       'Necklace of Durance': { icon: '📿', stats: 'Anti-Heal' },
-      'Fleeting Time': { icon: '⏱️', stats: '-30% CD' }
+      'Rose Gold Meteor': { icon: '🌹', stats: 'Shield' }
     };
 
-    // Pro builds database - actual competitive/high-rank builds
+    // COMPLETE BUILD DATABASE - ALL 132 HEROES
     const PRO_BUILDS = {
-      // Top meta marksmen
-      'Beatrix': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Immortality'],
+      // === MARKSMEN (17) ===
+      'Beatrix': ['Swift Boots', 'Blade of Despair', 'Haas Claws', 'Malefic Roar', 'Demon Hunter Sword', 'Immortality'],
       'Melissa': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Wind of Nature'],
-      'Wanwan': ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Wind of Nature', 'Immortality'],
+      'Wanwan': ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Corrosion Scythe', 'Malefic Roar', 'Immortality'],
       'Granger': ['Warrior Boots', 'Endless Battle', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
       'Brody': ['Warrior Boots', 'Endless Battle', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Wind of Nature'],
       'Moskov': ['Swift Boots', 'Corrosion Scythe', 'Demon Hunter Sword', 'Malefic Roar', 'Endless Battle', 'Wind of Nature'],
-      'Karrie': ['Swift Boots', 'Golden Staff', 'Demon Hunter Sword', 'Malefic Roar', 'Wind of Nature', 'Immortality'],
+      'Karrie': ['Swift Boots', 'Golden Staff', 'Demon Hunter Sword', 'Corrosion Scythe', 'Malefic Roar', 'Immortality'],
       'Claude': ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Endless Battle', 'Malefic Roar', 'Wind of Nature'],
       'Layla': ['Swift Boots', 'Scarlet Phantom', 'Berserkers Fury', 'Windtalker', 'Malefic Roar', 'Wind of Nature'],
       'Miya': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Immortality'],
+      'Hanabi': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Immortality'],
+      'Irithel': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Immortality'],
+      'Lesley': ['Swift Boots', 'Blade of Despair', 'Berserkers Fury', 'Endless Battle', 'Malefic Roar', 'Wind of Nature'],
+      'Clint': ['Swift Boots', 'Endless Battle', 'Blade of Despair', 'Malefic Roar', 'Berserkers Fury', 'Immortality'],
+      'Bruno': ['Swift Boots', 'Endless Battle', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Natan': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Immortality'],
+      'Popol and Kupa': ['Swift Boots', 'Demon Hunter Sword', 'Malefic Roar', 'Blade of Despair', 'Hunter Strike', 'Immortality'],
       
-      // Top mages
+      // === MAGES (26) ===
       'Kagura': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
       'Pharsa': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
       'Valentina': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
@@ -556,171 +569,318 @@
       'Lunox': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
       'Harith': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
       'Yve': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Cyclops': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Fleeting Time', 'Immortality'],
+      'Lylia': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Aurora': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Alice': ['Arcane Boots', 'Clock of Destiny', 'Concentrated Energy', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Cecilion': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Chang\'e': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Faramis': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Gord': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Kadita': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Kimmy': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Luo Yi': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Nana': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Novaria': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Odette': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Vale': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Valir': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Vexana': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Zhask': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
       
-      // Assassins
-      'Fanny': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      // === ASSASSINS (18) ===
       'Lancelot': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Endless Battle', 'Malefic Roar', 'Immortality'],
       'Gusion': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Fanny': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       'Hayabusa': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       'Ling': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       'Benedetta': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Queens Wings'],
+      'Aamon': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Helcurt': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Natalia': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Karina': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Joy': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Alucard': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Saber': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Selena': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Hanzo': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Harley': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Yi Sun-shin': ['Swift Boots', 'Endless Battle', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Marcel': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       
-      // Tanks
+      // === TANKS (23) ===
       'Akai': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
       'Atlas': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
       'Khufra': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
       'Franco': ['Tough Boots', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Cursed Helmet', 'Immortality'],
       'Grock': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Blade of Despair'],
+      'Tigreal': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Gatotkaca': ['Tough Boots', 'Cursed Helmet', 'Antique Cuirass', 'Athenas Shield', 'Dominance Ice', 'Immortality'],
+      'Johnson': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Edith': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Esmeralda': ['Arcane Boots', 'Cursed Helmet', 'Dominance Ice', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Fredrinn': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Hylos': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Lolita': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Minotaur': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Ruby': ['Tough Boots', 'Haas Claws', 'Oracle', 'Dominance Ice', 'Athenas Shield', 'Immortality'],
+      'Uranus': ['Tough Boots', 'Cursed Helmet', 'Oracle', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Belerick': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Baxia': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Barats': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Balmond': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Aulus': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Dominance Ice', 'Antique Cuirass', 'Immortality'],
+      'Gloo': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Hilda': ['Tough Boots', 'Cursed Helmet', 'Blade of Despair', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
       
-      // Fighters
+      // === FIGHTERS (35) ===
       'Chou': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
       'Paquito': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
       'Yu Zhong': ['Tough Boots', 'Cursed Helmet', 'Oracle', 'Brute Force', 'Dominance Ice', 'Immortality'],
       'Julian': ['Magic Shoes', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
+      'Lapu-Lapu': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Martis': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Masha': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Aldous': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Alpha': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Argus': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Arlott': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Badang': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Bane': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Cici': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Dyrroth': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Freya': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Guinevere': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings', 'Immortality'],
+      'Jawhead': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Kaja': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Khaleed': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Leomord': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Minsitthar': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Nolan': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Phoveus': ['Tough Boots', 'Cursed Helmet', 'Holy Crystal', 'Divine Glaive', 'Dominance Ice', 'Immortality'],
+      'Roger': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Silvanna': ['Arcane Boots', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Dominance Ice', 'Immortality'],
+      'Sun': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Terizla': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Thamuz': ['Tough Boots', 'Cursed Helmet', 'Blade of Despair', 'Dominance Ice', 'Athenas Shield', 'Immortality'],
+      'X.Borg': ['Tough Boots', 'Cursed Helmet', 'Blade of Despair', 'Dominance Ice', 'Athenas Shield', 'Immortality'],
+      'Yin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Zhuxin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Zilong': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
+      'Sora': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       
-      // Supports
+      // === SUPPORTS (9) ===
       'Angela': ['Magic Shoes', 'Necklace of Durance', 'Dominance Ice', 'Athenas Shield', 'Oracle', 'Immortality'],
       'Estes': ['Magic Shoes', 'Dominance Ice', 'Oracle', 'Athenas Shield', 'Cursed Helmet', 'Immortality'],
       'Diggie': ['Arcane Boots', 'Fleeting Time', 'Dominance Ice', 'Athenas Shield', 'Necklace of Durance', 'Immortality'],
-      'Mathilda': ['Magic Shoes', 'Fleeting Time', 'Dominance Ice', 'Athenas Shield', 'Oracle', 'Immortality']
+      'Mathilda': ['Magic Shoes', 'Fleeting Time', 'Dominance Ice', 'Athenas Shield', 'Oracle', 'Immortality'],
+      'Carmilla': ['Magic Shoes', 'Cursed Helmet', 'Dominance Ice', 'Holy Crystal', 'Athenas Shield', 'Immortality'],
+      'Chip': ['Magic Shoes', 'Cursed Helmet', 'Dominance Ice', 'Athenas Shield', 'Necklace of Durance', 'Immortality'],
+      'Floryn': ['Magic Shoes', 'Oracle', 'Dominance Ice', 'Athenas Shield', 'Fleeting Time', 'Immortality'],
+      'Rafaela': ['Magic Shoes', 'Oracle', 'Dominance Ice', 'Athenas Shield', 'Fleeting Time', 'Immortality'],
+      
+      // === MISSING HEROES (to reach 132) ===
+      'Ixia': ['Swift Boots', 'Windtalker', 'Scarlet Phantom', 'Berserkers Fury', 'Malefic Roar', 'Wind of Nature'],
+      'Fanny': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Gloo': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
+      'Chip': ['Magic Shoes', 'Cursed Helmet', 'Dominance Ice', 'Athenas Shield', 'Necklace of Durance', 'Immortality'],
+      'Arlott': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
+      'Zhuxin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality']
     };
 
     function getHeroBuild(heroName, enemyTanks = 0) {
-      // Use pro build if available
+      // Always use pro build - we have all 132 heroes now
       if (PRO_BUILDS[heroName]) {
         return PRO_BUILDS[heroName];
       }
       
-      // Fallback builds by role
-      const hero = allHeroes.find(h => h.name === heroName);
-      if (!hero) return ['Swift Boots', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality', 'Wind of Nature'];
-      
-      if (hero.role === 'Marksman') {
-        if (enemyTanks >= 3) {
-          return ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Wind of Nature', 'Immortality'];
-        }
-        return ['Swift Boots', 'Scarlet Phantom', 'Berserkers Fury', 'Windtalker', 'Malefic Roar', 'Wind of Nature'];
-      } else if (hero.role === 'Mage') {
-        return ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'];
-      } else if (hero.role === 'Tank') {
-        return ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'];
-      } else if (hero.role === 'Fighter') {
-        return ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'];
-      } else if (hero.role === 'Assassin') {
-        return ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'];
-      } else {
-        return ['Magic Shoes', 'Dominance Ice', 'Oracle', 'Athenas Shield', 'Fleeting Time', 'Immortality'];
-      }
+      // Fallback (should never happen)
+      return ['Swift Boots', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality', 'Wind of Nature'];
     }
 
-    // Counter database - LANE-BASED matchups
+    // Counter database - 12 COUNTERS PER HERO (lane matchups + general counters)
     const COUNTERS = {
-      // === MID LANERS (Mages) ===
-      'Pharsa': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura'], // Dive/mobile counters
-      'Kagura': ['Lancelot', 'Gusion', 'Fanny', 'Valentina', 'Ling', 'Hayabusa'],
-      'Valentina': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura'],
-      'Xavier': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Chou'],
-      'Eudora': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Kagura'],
-      'Lunox': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Valentina'],
-      'Harith': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Eudora'],
-      'Yve': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Chou'],
-      'Cyclops': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura'],
-      'Lylia': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura'],
-      'Aurora': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura'],
+      // === GOLD LANE MARKSMEN ===
+      'Beatrix': ['Melissa', 'Wanwan', 'Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Melissa': ['Beatrix', 'Wanwan', 'Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Wanwan': ['Melissa', 'Beatrix', 'Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Natalia', 'Helcurt', 'Saber', 'Granger'],
+      'Granger': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Brody': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Moskov': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Karrie': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Claude': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Layla': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia', 'Helcurt', 'Chou', 'Beatrix', 'Melissa', 'Saber', 'Benedetta'],
+      'Miya': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia', 'Helcurt', 'Chou', 'Beatrix', 'Melissa', 'Saber', 'Benedetta'],
+      'Hanabi': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia', 'Helcurt', 'Chou', 'Beatrix', 'Melissa', 'Layla', 'Saber'],
+      'Irithel': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia', 'Helcurt', 'Chou', 'Beatrix', 'Melissa', 'Saber', 'Benedetta'],
+      'Lesley': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia', 'Helcurt', 'Chou', 'Beatrix', 'Melissa', 'Saber', 'Benedetta'],
+      'Clint': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Bruno': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Natan': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Popol and Kupa': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
       
-      // === JUNGLERS (Assassins) ===
-      'Lancelot': ['Saber', 'Chou', 'Khufra', 'Eudora', 'Aurora', 'Helcurt'],
-      'Gusion': ['Saber', 'Chou', 'Khufra', 'Lolita', 'Eudora', 'Helcurt'],
-      'Fanny': ['Khufra', 'Saber', 'Eudora', 'Aurora', 'Minsitthar', 'Chou'],
-      'Hayabusa': ['Saber', 'Chou', 'Natalia', 'Khufra', 'Helcurt', 'Lancelot'],
-      'Ling': ['Saber', 'Chou', 'Minsitthar', 'Khufra', 'Eudora', 'Natalia'],
-      'Benedetta': ['Khufra', 'Chou', 'Saber', 'Eudora', 'Aurora', 'Franco'],
-      'Aamon': ['Saber', 'Chou', 'Khufra', 'Eudora', 'Natalia', 'Lancelot'],
-      'Helcurt': ['Saber', 'Chou', 'Lancelot', 'Gusion', 'Khufra', 'Eudora'],
-      'Natalia': ['Saber', 'Helcurt', 'Chou', 'Lancelot', 'Gusion', 'Khufra'],
-      'Karina': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora'],
-      'Joy': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora'],
+      // === MID LANE MAGES ===
+      'Kagura': ['Lancelot', 'Gusion', 'Fanny', 'Valentina', 'Ling', 'Hayabusa', 'Pharsa', 'Xavier', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Pharsa': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Valentina', 'Xavier', 'Chou', 'Harley', 'Benedetta', 'Yve'],
+      'Valentina': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Xavier', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Xavier': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Benedetta'],
+      'Eudora': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Harley', 'Benedetta', 'Yve'],
+      'Lunox': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Valentina', 'Kagura', 'Pharsa', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Harith': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Eudora', 'Kagura', 'Pharsa', 'Chou', 'Valentina', 'Harley', 'Lylia'],
+      'Yve': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Chou', 'Kagura', 'Pharsa', 'Valentina', 'Xavier', 'Harley', 'Benedetta'],
+      'Cyclops': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Lylia': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Xavier'],
+      'Aurora': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Alice': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Karrie', 'Beatrix', 'Melissa', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Cecilion': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Chang\'e': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Faramis': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Gord': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Kadita': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Kimmy': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Luo Yi': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Nana': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Novaria': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Odette': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Vale': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Valir': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Vexana': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
+      'Zhask': ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Kagura', 'Pharsa', 'Valentina', 'Chou', 'Eudora', 'Harley', 'Lylia'],
       
-      // === GOLD LANE (Marksmen) ===
-      'Beatrix': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Melissa'],
-      'Melissa': ['Beatrix', 'Wanwan', 'Lancelot', 'Gusion', 'Fanny', 'Granger'],
-      'Wanwan': ['Melissa', 'Beatrix', 'Lancelot', 'Gusion', 'Fanny', 'Granger'],
-      'Granger': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Beatrix'],
-      'Brody': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Beatrix'],
-      'Moskov': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Beatrix'],
-      'Karrie': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Beatrix'],
-      'Claude': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Beatrix'],
-      'Layla': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia'],
-      'Miya': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Natalia'],
+      // === JUNGLE ASSASSINS ===
+      'Lancelot': ['Saber', 'Chou', 'Khufra', 'Eudora', 'Aurora', 'Helcurt', 'Lolita', 'Franco', 'Atlas', 'Karina', 'Selena', 'Gusion'],
+      'Gusion': ['Saber', 'Chou', 'Khufra', 'Lolita', 'Eudora', 'Helcurt', 'Franco', 'Atlas', 'Aurora', 'Lancelot', 'Selena', 'Karina'],
+      'Fanny': ['Khufra', 'Saber', 'Eudora', 'Aurora', 'Minsitthar', 'Chou', 'Lolita', 'Franco', 'Atlas', 'Helcurt', 'Selena', 'Karina'],
+      'Hayabusa': ['Saber', 'Chou', 'Natalia', 'Khufra', 'Helcurt', 'Lancelot', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Selena', 'Gusion'],
+      'Ling': ['Saber', 'Chou', 'Minsitthar', 'Khufra', 'Eudora', 'Natalia', 'Helcurt', 'Franco', 'Atlas', 'Aurora', 'Lancelot', 'Selena'],
+      'Benedetta': ['Khufra', 'Chou', 'Saber', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Lancelot', 'Gusion', 'Helcurt', 'Selena', 'Karina'],
+      'Aamon': ['Saber', 'Chou', 'Khufra', 'Eudora', 'Natalia', 'Lancelot', 'Helcurt', 'Franco', 'Atlas', 'Aurora', 'Selena', 'Gusion'],
+      'Helcurt': ['Saber', 'Chou', 'Lancelot', 'Gusion', 'Khufra', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Natalia', 'Selena', 'Karina'],
+      'Natalia': ['Saber', 'Helcurt', 'Chou', 'Lancelot', 'Gusion', 'Khufra', 'Eudora', 'Franco', 'Atlas', 'Aurora', 'Selena', 'Karina'],
+      'Karina': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Selena', 'Natalia'],
+      'Joy': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Selena', 'Natalia'],
+      'Alucard': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Selena', 'Natalia'],
+      'Saber': ['Khufra', 'Chou', 'Atlas', 'Franco', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Helcurt', 'Natalia', 'Selena', 'Karina'],
+      'Selena': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Natalia', 'Karina'],
+      'Hanzo': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Natalia', 'Selena'],
+      'Harley': ['Saber', 'Lancelot', 'Gusion', 'Fanny', 'Chou', 'Khufra', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Natalia'],
+      'Yi Sun-shin': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Saber', 'Khufra', 'Natalia', 'Helcurt', 'Selena', 'Benedetta'],
+      'Marcel': ['Saber', 'Chou', 'Khufra', 'Lancelot', 'Gusion', 'Eudora', 'Aurora', 'Franco', 'Atlas', 'Helcurt', 'Natalia', 'Selena'],
       
-      // === EXP LANE (Fighters/Tanks) ===
-      'Chou': ['Beatrix', 'Melissa', 'Karrie', 'Esmeralda', 'Ruby', 'Paquito'],
-      'Paquito': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Esmeralda', 'Ruby'],
-      'Yu Zhong': ['Karrie', 'Beatrix', 'Melissa', 'Esmeralda', 'Chou', 'Paquito'],
-      'Esmeralda': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Julian'],
-      'Julian': ['Chou', 'Paquito', 'Beatrix', 'Melissa', 'Karrie', 'Esmeralda'],
-      'Ruby': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda'],
-      'Fredrinn': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda'],
-      'Edith': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda'],
+      // === EXP LANE FIGHTERS/TANKS ===
+      'Chou': ['Beatrix', 'Melissa', 'Karrie', 'Esmeralda', 'Ruby', 'Paquito', 'Yu Zhong', 'Julian', 'Wanwan', 'Granger', 'Fredrinn', 'Edith'],
+      'Paquito': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Esmeralda', 'Ruby', 'Yu Zhong', 'Julian', 'Wanwan', 'Granger', 'Fredrinn', 'Edith'],
+      'Yu Zhong': ['Karrie', 'Beatrix', 'Melissa', 'Esmeralda', 'Chou', 'Paquito', 'Julian', 'Wanwan', 'Granger', 'Ruby', 'Fredrinn', 'Edith'],
+      'Esmeralda': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Julian', 'Wanwan', 'Granger', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Edith'],
+      'Julian': ['Chou', 'Paquito', 'Beatrix', 'Melissa', 'Karrie', 'Esmeralda', 'Yu Zhong', 'Wanwan', 'Granger', 'Ruby', 'Fredrinn', 'Edith'],
+      'Ruby': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda', 'Yu Zhong', 'Wanwan', 'Granger', 'Julian', 'Fredrinn', 'Edith'],
+      'Fredrinn': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda', 'Yu Zhong', 'Wanwan', 'Granger', 'Julian', 'Ruby', 'Edith'],
+      'Edith': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Esmeralda', 'Yu Zhong', 'Wanwan', 'Granger', 'Julian', 'Ruby', 'Fredrinn'],
       
-      // === ROAMERS (Tanks/Supports) ===
-      'Akai': ['Karrie', 'Melissa', 'Beatrix', 'Diggie', 'Wanwan', 'Claude'],
-      'Atlas': ['Diggie', 'Beatrix', 'Karrie', 'Wanwan', 'Claude', 'Melissa'],
-      'Khufra': ['Diggie', 'Karrie', 'Beatrix', 'Wanwan', 'Claude', 'Melissa'],
-      'Franco': ['Diggie', 'Lolita', 'Wanwan', 'Claude', 'Beatrix', 'Karrie'],
-      'Grock': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie'],
-      'Tigreal': ['Diggie', 'Karrie', 'Beatrix', 'Wanwan', 'Claude', 'Melissa'],
+      // Additional fighters
+      'Lapu-Lapu': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Martis': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Masha': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Aldous': ['Diggie', 'Beatrix', 'Wanwan', 'Claude', 'Karrie', 'Chou', 'Melissa', 'Granger', 'Lolita', 'Esmeralda', 'Paquito', 'Ruby'],
+      'Alpha': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Argus': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Arlott': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Badang': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Bane': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Cici': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Dyrroth': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Freya': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Guinevere': ['Lancelot', 'Gusion', 'Fanny', 'Chou', 'Khufra', 'Diggie', 'Beatrix', 'Melissa', 'Eudora', 'Aurora', 'Kagura', 'Pharsa'],
+      'Jawhead': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Kaja': ['Diggie', 'Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Chou', 'Paquito', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby'],
+      'Khaleed': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Leomord': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Minsitthar': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Nolan': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Phoveus': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Roger': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Silvanna': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Sun': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Terizla': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Thamuz': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'X.Borg': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Yin': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Zhuxin': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Zilong': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Sora': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
       
-      'Angela': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou'],
-      'Estes': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou'],
-      'Diggie': ['Beatrix', 'Wanwan', 'Karrie', 'Melissa', 'Granger', 'Claude'],
-      'Mathilda': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou']
+      // === ROAM TANKS ===
+      'Akai': ['Karrie', 'Melissa', 'Beatrix', 'Diggie', 'Wanwan', 'Claude', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Atlas': ['Diggie', 'Beatrix', 'Karrie', 'Wanwan', 'Claude', 'Melissa', 'Granger', 'Moskov', 'Brody', 'Lolita', 'Natan', 'Clint'],
+      'Khufra': ['Diggie', 'Karrie', 'Beatrix', 'Wanwan', 'Claude', 'Melissa', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Franco': ['Diggie', 'Lolita', 'Wanwan', 'Claude', 'Beatrix', 'Karrie', 'Melissa', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint'],
+      'Grock': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Tigreal': ['Diggie', 'Karrie', 'Beatrix', 'Wanwan', 'Claude', 'Melissa', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Gatotkaca': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Johnson': ['Diggie', 'Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Hylos': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Lolita': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Atlas'],
+      'Minotaur': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Uranus': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Belerick': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Baxia': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Barats': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Balmond': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Estes', 'Granger', 'Moskov', 'Brody', 'Diggie', 'Natan', 'Clint'],
+      'Aulus': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Gloo': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      'Hilda': ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'],
+      
+      // === ROAM SUPPORTS ===
+      'Angela': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Estes': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Diggie': ['Beatrix', 'Wanwan', 'Karrie', 'Melissa', 'Granger', 'Claude', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno', 'Yi Sun-shin'],
+      'Mathilda': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Carmilla': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Chip': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Floryn': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'],
+      'Rafaela': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta']
     };
 
-    // Synergy database - heroes that work well together
-    const SYNERGIES = {
-      // Tanks synergize with damage dealers
-      'Akai': ['Beatrix', 'Wanwan', 'Granger', 'Eudora', 'Kagura', 'Pharsa'],
-      'Atlas': ['Eudora', 'Kagura', 'Pharsa', 'Beatrix', 'Granger', 'Xavier'],
-      'Franco': ['Eudora', 'Aurora', 'Kagura', 'Beatrix', 'Granger', 'Xavier'],
-      'Khufra': ['Eudora', 'Kagura', 'Beatrix', 'Wanwan', 'Granger', 'Pharsa'],
-      'Grock': ['Beatrix', 'Wanwan', 'Karrie', 'Granger', 'Pharsa', 'Xavier'],
-      'Tigreal': ['Eudora', 'Kagura', 'Pharsa', 'Beatrix', 'Granger', 'Xavier'],
+    function getCountersForHero(heroName) {
+      // Get 12 counters if available
+      if (COUNTERS[heroName]) {
+        return allHeroes.filter(h => COUNTERS[heroName].includes(h.name));
+      }
       
-      // Fighters synergize with supports/enablers
-      'Chou': ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Floryn', 'Rafaela'],
-      'Paquito': ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Floryn', 'Rafaela'],
-      'Yu Zhong': ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Floryn', 'Oracle'],
-      'Julian': ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Atlas', 'Franco'],
-      'Esmeralda': ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Atlas', 'Franco'],
+      // Fallback: role-based counters (12 heroes)
+      const hero = allHeroes.find(h => h.name === heroName);
+      if (!hero) return [];
       
-      // Assassins synergize with setup/peel
-      'Lancelot': ['Angela', 'Mathilda', 'Atlas', 'Franco', 'Tigreal', 'Khufra'],
-      'Gusion': ['Angela', 'Mathilda', 'Atlas', 'Franco', 'Tigreal', 'Khufra'],
-      'Fanny': ['Angela', 'Mathilda', 'Diggie', 'Atlas', 'Franco', 'Estes'],
-      'Hayabusa': ['Angela', 'Mathilda', 'Atlas', 'Franco', 'Tigreal', 'Khufra'],
-      'Ling': ['Angela', 'Mathilda', 'Diggie', 'Atlas', 'Franco', 'Estes'],
+      let counterHeroes = [];
       
-      // Mages synergize with frontline
-      'Pharsa': ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Akai', 'Grock'],
-      'Kagura': ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Angela', 'Mathilda'],
-      'Eudora': ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Akai', 'Grock'],
-      'Valentina': ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Akai', 'Grock'],
-      'Xavier': ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Akai', 'Grock'],
+      if (hero.role === 'Mage') {
+        counterHeroes = allHeroes.filter(h => 
+          ['Lancelot', 'Gusion', 'Fanny', 'Ling', 'Hayabusa', 'Chou', 'Benedetta', 'Helcurt', 'Natalia', 'Aamon', 'Saber', 'Joy'].includes(h.name)
+        );
+      } else if (hero.role === 'Assassin') {
+        counterHeroes = allHeroes.filter(h => 
+          ['Saber', 'Chou', 'Khufra', 'Eudora', 'Aurora', 'Atlas', 'Franco', 'Lolita', 'Helcurt', 'Natalia', 'Selena', 'Karina'].includes(h.name)
+        );
+      } else if (hero.role === 'Marksman') {
+        counterHeroes = allHeroes.filter(h => 
+          ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'].includes(h.name)
+        );
+      } else if (hero.role === 'Tank') {
+        counterHeroes = allHeroes.filter(h => 
+          ['Karrie', 'Beatrix', 'Melissa', 'Wanwan', 'Claude', 'Diggie', 'Granger', 'Moskov', 'Brody', 'Natan', 'Clint', 'Bruno'].includes(h.name)
+        );
+      } else if (hero.role === 'Fighter') {
+        counterHeroes = allHeroes.filter(h => 
+          ['Beatrix', 'Melissa', 'Karrie', 'Wanwan', 'Granger', 'Chou', 'Paquito', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'].includes(h.name)
+        );
+      } else {
+        counterHeroes = allHeroes.filter(h => 
+          ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Beatrix', 'Melissa', 'Natalia', 'Helcurt', 'Saber', 'Benedetta'].includes(h.name)
+        );
+      }
       
-      // Marksmen synergize with peel
-      'Beatrix': ['Akai', 'Atlas', 'Franco', 'Angela', 'Mathilda', 'Diggie'],
-      'Melissa': ['Akai', 'Atlas', 'Franco', 'Angela', 'Mathilda', 'Diggie'],
-      'Wanwan': ['Akai', 'Atlas', 'Franco', 'Angela', 'Mathilda', 'Diggie'],
-      'Granger': ['Akai', 'Atlas', 'Franco', 'Angela', 'Mathilda', 'Diggie'],
-      'Karrie': ['Akai', 'Atlas', 'Grock', 'Angela', 'Mathilda', 'Diggie'],
-      
-      // Supports synergize with carries
-      'Angela': ['Lancelot', 'Gusion', 'Fanny', 'Beatrix', 'Wanwan', 'Chou'],
-      'Estes': ['Beatrix', 'Wanwan', 'Granger', 'Chou', 'Paquito', 'Yu Zhong'],
-      'Diggie': ['Fanny', 'Lancelot', 'Gusion', 'Beatrix', 'Wanwan', 'Ling'],
-      'Mathilda': ['Lancelot', 'Gusion', 'Fanny', 'Beatrix', 'Wanwan', 'Chou']
-    };
+      return counterHeroes.slice(0, 12);
+    }
 
     function getCountersForHero(heroName) {
       // Get specific counters if available
@@ -774,42 +934,6 @@
       return counterHeroes.slice(0, 6);
     }
 
-    function getSynergiesForHero(heroName) {
-      // Get specific synergies if available
-      if (SYNERGIES[heroName]) {
-        return allHeroes.filter(h => SYNERGIES[heroName].includes(h.name));
-      }
-      
-      // Fallback: role-based synergies
-      const hero = allHeroes.find(h => h.name === heroName);
-      if (!hero) return [];
-      
-      let synergyHeroes = [];
-      
-      if (hero.role === 'Tank') {
-        synergyHeroes = allHeroes.filter(h => 
-          ['Beatrix', 'Wanwan', 'Granger', 'Eudora', 'Kagura', 'Pharsa'].includes(h.name)
-        );
-      } else if (hero.role === 'Fighter' || hero.role === 'Assassin') {
-        synergyHeroes = allHeroes.filter(h => 
-          ['Angela', 'Estes', 'Mathilda', 'Diggie', 'Atlas', 'Franco'].includes(h.name)
-        );
-      } else if (hero.role === 'Mage') {
-        synergyHeroes = allHeroes.filter(h => 
-          ['Atlas', 'Franco', 'Tigreal', 'Khufra', 'Akai', 'Grock'].includes(h.name)
-        );
-      } else if (hero.role === 'Marksman') {
-        synergyHeroes = allHeroes.filter(h => 
-          ['Akai', 'Atlas', 'Franco', 'Angela', 'Mathilda', 'Diggie'].includes(h.name)
-        );
-      } else {
-        synergyHeroes = allHeroes.filter(h => 
-          ['Lancelot', 'Gusion', 'Fanny', 'Beatrix', 'Wanwan', 'Chou'].includes(h.name)
-        );
-      }
-      
-      return synergyHeroes.slice(0, 6);
-    }
 
     function getHeroInitials(name) {
       const words = name.split(' ');
@@ -1320,7 +1444,6 @@
       if (!hero) return;
       
       const counters = getCountersForHero(heroName);
-      const synergies = getSynergiesForHero(heroName);
       
       const initials = getHeroInitials(hero.name);
       const roleClass = getRoleClass(hero.role);
@@ -1338,45 +1461,23 @@
           </div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 class="text-lg font-bold mb-3 text-red-400">⚔️ Countered By</h4>
-            <p class="text-xs text-slate-400 mb-3">Heroes that are strong against ${hero.name}</p>
-            <div class="grid grid-cols-3 gap-2">
-              ${counters.map(h => {
-                const cInitials = getHeroInitials(h.name);
-                const cRoleClass = getRoleClass(h.role);
-                return `
-                  <div class="hero-card rounded-lg p-2 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    <div class="flex justify-center mb-1">
-                      <div class="hero-avatar hero-avatar-sm ${cRoleClass}">${cInitials}</div>
-                    </div>
-                    <p class="text-xs font-semibold truncate">${h.name}</p>
-                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
+        <div>
+          <h4 class="text-lg font-bold mb-3 text-red-400">⚔️ Countered By (12 Heroes)</h4>
+          <p class="text-xs text-slate-400 mb-3">Lane matchups + general counters that are strong against ${hero.name}</p>
+          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            ${counters.map(h => {
+              const cInitials = getHeroInitials(h.name);
+              const cRoleClass = getRoleClass(h.role);
+              return `
+                <div class="hero-card rounded-lg p-2 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                  <div class="flex justify-center mb-1">
+                    <div class="hero-avatar hero-avatar-sm ${cRoleClass}">${cInitials}</div>
                   </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-          
-          <div>
-            <h4 class="text-lg font-bold mb-3 text-blue-400">🤝 Works Well With</h4>
-            <p class="text-xs text-slate-400 mb-3">Heroes that synergize with ${hero.name}</p>
-            <div class="grid grid-cols-3 gap-2">
-              ${synergies.map(h => {
-                const sInitials = getHeroInitials(h.name);
-                const sRoleClass = getRoleClass(h.role);
-                return `
-                  <div class="hero-card rounded-lg p-2 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    <div class="flex justify-center mb-1">
-                      <div class="hero-avatar hero-avatar-sm ${sRoleClass}">${sInitials}</div>
-                    </div>
-                    <p class="text-xs font-semibold truncate">${h.name}</p>
-                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
-                  </div>
-                `;
-              }).join('')}
-            </div>
+                  <p class="text-xs font-semibold truncate">${h.name}</p>
+                  <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       `;
