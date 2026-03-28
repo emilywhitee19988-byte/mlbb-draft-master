@@ -34,11 +34,11 @@
       <button onclick="switchTab(1)" id="tab-1" class="tab-button px-8 py-4 font-semibold text-lg">🎯 Draft Picker</button>
     </div>
 
-    <!-- Tier List Tab -->
+    <!-- Tier List -->
     <div id="content-0">
-      <div class="mb-6">
-        <input id="search-tier" type="text" placeholder="Search hero..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg focus:outline-none focus:border-yellow-400" onkeyup="filterTierTable()">
-      </div>
+      <input id="search-tier" type="text" placeholder="Search hero..." 
+             class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400"
+             onkeyup="filterTierTable()">
       <div class="bg-gray-900 rounded-3xl overflow-hidden border border-gray-700">
         <table class="w-full">
           <thead class="bg-gray-800">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- Draft Picker Tab -->
+    <!-- Draft Picker -->
     <div id="content-1" class="hidden">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-5">
@@ -80,7 +80,9 @@
             <button onclick="setAddMode(1)" id="mode-1" class="add-mode-btn px-5 py-2 rounded-2xl bg-red-600 text-white font-semibold">Add to Enemy Team</button>
           </div>
         </div>
-        <input id="search-draft" type="text" placeholder="Filter heroes..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-4 focus:outline-none focus:border-yellow-400" onkeyup="renderHeroPool()">
+        <input id="search-draft" type="text" placeholder="Filter heroes..." 
+               class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-4 focus:outline-none focus:border-yellow-400"
+               onkeyup="renderHeroPool()">
         <div id="hero-pool" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 min-h-[300px]"></div>
       </div>
     </div>
@@ -109,8 +111,9 @@
         const res = await fetch('https://mlbb-stats.rone.dev/api/heroes/rank');
         const json = await res.json();
         
-        heroesData = json.data.records.map(r => {
-          const h = r.data.main_hero.data;
+        // ✅ THIS IS THE CORRECT CURRENT API STRUCTURE
+        heroesData = json.data.map(r => {
+          const h = r.main_hero.data;
           return {
             name: h.name,
             image: h.head,
@@ -136,6 +139,7 @@
       document.getElementById('last-updated').innerHTML = `✅ Live • ${new Date().toLocaleTimeString()}`;
     }
 
+    // Tier List functions
     function renderTierTable(data) {
       const tbody = document.getElementById('hero-table');
       tbody.innerHTML = data.map(hero => {
@@ -144,19 +148,18 @@
         return `<tr class="border-b border-gray-800 hover:bg-gray-800"><td class="flex items-center gap-3 pl-6"><img src="${hero.image}" class="hero-img rounded-lg"> <span>${hero.name}</span></td><td class="font-mono">${hero.winRate}% <span class="${color}">▲</span></td><td class="font-mono text-blue-400">${hero.pickRate}%</td><td class="font-mono text-red-400">${hero.banRate}%</td><td class="text-right pr-6"><span class="px-5 py-1 text-xs font-bold rounded-2xl bg-gray-800 ${color}">${tier}</span></td></tr>`;
       }).join('');
     }
-
     function sortTierTable(n) {
       const sorted = [...heroesData].sort((a,b) => n===1 ? b.rawWin - a.rawWin : n===2 ? parseFloat(b.pickRate) - parseFloat(a.pickRate) : parseFloat(b.banRate) - parseFloat(a.banRate));
       renderTierTable(sorted);
     }
-
     function filterTierTable() {
       const term = document.getElementById('search-tier').value.toLowerCase();
       renderTierTable(heroesData.filter(h => h.name.toLowerCase().includes(term)));
     }
 
+    // Draft functions (full code)
     function setAddMode(mode) { addMode = mode; document.querySelectorAll('.add-mode-btn').forEach((b,i) => b.style.opacity = i === mode ? '1' : '0.5'); }
-    function renderSlots() { /* same as before - slots code */ 
+    function renderSlots() {
       const allyHTML = allyPicks.map((hero,i) => `<div onclick="showBuildModal(${i},0)" class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 border-emerald-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(0,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - allyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
       document.getElementById('ally-slots').innerHTML = allyHTML.join('');
       const enemyHTML = enemyPicks.map((hero,i) => `<div class="slot bg-gray-800 rounded-2xl p-3 text-center border-2 border-red-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(1,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - enemyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
@@ -164,17 +167,13 @@
     }
     function renderHeroPool() {
       const poolEl = document.getElementById('hero-pool');
-      if (!dataLoaded) {
-        poolEl.innerHTML = `<p class="col-span-full text-yellow-400 text-center py-12 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading 132 heroes…</p>`;
-        return;
-      }
-      // rest of pool code (same as previous version)
+      if (!dataLoaded) return poolEl.innerHTML = `<p class="col-span-full text-yellow-400 text-center py-12 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading 132 heroes…</p>`;
       const term = (document.getElementById('search-draft').value || '').toLowerCase();
       const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
       const filtered = heroesData.filter(h => !pickedNames.includes(h.name) && h.name.toLowerCase().includes(term));
       poolEl.innerHTML = filtered.length ? filtered.map(hero => `<div onclick="addHeroToTeam('${hero.name}')" class="bg-gray-800 hover:bg-gray-700 rounded-2xl p-2 flex flex-col items-center cursor-pointer"><img src="${hero.image}" class="hero-img"><p class="text-xs mt-2 text-center">${hero.name}</p></div>`).join('') : `<p class="col-span-full text-gray-400 text-center py-8">No heroes match or all picked</p>`;
     }
-    function addHeroToTeam(heroName) { /* same logic as before */ 
+    function addHeroToTeam(heroName) {
       if (!dataLoaded) return;
       const hero = heroesData.find(h => h.name === heroName);
       if (!hero) return;
@@ -183,8 +182,11 @@
       else return alert("Team is full!");
       renderSlots(); renderHeroPool(); renderRecommendations();
     }
-    function removePick(team, index) { if (team === 0) allyPicks.splice(index, 1); else enemyPicks.splice(index, 1); renderSlots(); renderHeroPool(); renderRecommendations(); }
-    function renderRecommendations() { /* same as before */ 
+    function removePick(team, index) {
+      if (team === 0) allyPicks.splice(index, 1); else enemyPicks.splice(index, 1);
+      renderSlots(); renderHeroPool(); renderRecommendations();
+    }
+    function renderRecommendations() {
       const recEl = document.getElementById('recommendations');
       if (!dataLoaded) return recEl.innerHTML = `<p class="text-yellow-400 text-center py-8 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading optimal picks…</p>`;
       const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
@@ -194,7 +196,7 @@
       sorted.forEach(h => html += `<div onclick="addHeroToTeam('${h.name}')" class="flex gap-3 bg-gray-800 hover:bg-gray-700 rounded-2xl p-3 mb-2 cursor-pointer"><img src="${h.image}" class="hero-img"><div class="flex-1"><div class="font-semibold">${h.name}</div><div class="text-emerald-400 text-sm">${h.winRate}% WR • Great into this comp</div></div></div>`);
       recEl.innerHTML = html || '<p class="text-gray-400">All heroes picked!</p>';
     }
-    function showBuildModal(index, team) { /* sample build modal */ 
+    function showBuildModal(index, team) {
       const hero = team === 0 ? allyPicks[index] : enemyPicks[index];
       if (!hero) return;
       document.getElementById('modal-hero-name').innerHTML = `${hero.name} • Sample Optimal Build`;
@@ -206,10 +208,7 @@
     function switchTab(n) {
       document.querySelectorAll('#content-0, #content-1').forEach(el => el.classList.add('hidden'));
       document.getElementById('content-' + n).classList.remove('hidden');
-      document.querySelectorAll('.tab-button').forEach((b,i) => {
-        b.classList.toggle('border-yellow-400', i===n);
-        b.classList.toggle('text-yellow-400', i===n);
-      });
+      document.querySelectorAll('.tab-button').forEach((b,i) => { b.classList.toggle('border-yellow-400', i===n); b.classList.toggle('text-yellow-400', i===n); });
       if (n === 1) { renderSlots(); renderHeroPool(); renderRecommendations(); }
     }
     window.onload = () => { fetchData(); setAddMode(0); };
