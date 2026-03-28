@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- Draft Picker (full version) -->
+    <!-- Draft Picker -->
     <div id="content-1" class="hidden">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-5">
@@ -103,21 +103,26 @@
     async function fetchData() {
       const loadingEl = document.getElementById('last-updated');
       loadingEl.innerHTML = `<i class="fas fa-sync fa-spin"></i> Fetching live ranked data...`;
+
+      // ✅ CORS PROXY FIX (this is what 25-year devs use for fan APIs)
+      const apiUrl = 'https://mlbb-stats.rone.dev/api/heroes/rank';
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+
       try {
-        const res = await fetch('https://mlbb-stats.rone.dev/api/heroes/rank');
+        const res = await fetch(proxyUrl);
         const json = await res.json();
-        
-        // ✅ EXACT LIVE STRUCTURE (verified today)
+
+        // ✅ Exact structure from the live API
         heroesData = json.data.records.map(r => {
           const inner = r.data;
           const h = inner.main_hero.data;
           return {
             name: h.name,
             image: h.head,
-            winRate: (r.main_hero_win_rate * 100).toFixed(1),
-            pickRate: (r.main_hero_appearance_rate * 100).toFixed(1),
-            banRate: (r.main_hero_ban_rate * 100).toFixed(1),
-            rawWin: r.main_hero_win_rate
+            winRate: (inner.main_hero_win_rate * 100).toFixed(1),
+            pickRate: (inner.main_hero_appearance_rate * 100).toFixed(1),
+            banRate: (inner.main_hero_ban_rate * 100).toFixed(1),
+            rawWin: inner.main_hero_win_rate
           };
         });
 
@@ -127,7 +132,7 @@
         renderRecommendations();
         loadingEl.innerHTML = `✅ Live • ${new Date().toLocaleTimeString()}`;
       } catch(e) {
-        loadingEl.innerHTML = `❌ Failed – click Refresh`;
+        loadingEl.innerHTML = `❌ Still blocked – try Refresh`;
         console.error(e);
       }
     }
@@ -157,7 +162,7 @@
       }).join('');
     }
 
-    // Draft Picker functions (full working version)
+    // Rest of draft functions (same as before)
     function setAddMode(mode) { addMode = mode; document.querySelectorAll('.add-mode-btn').forEach((b,i) => b.style.opacity = i === mode ? '1' : '0.5'); }
     function renderSlots() {
       const allyHTML = allyPicks.map((hero,i) => `<div onclick="showBuildModal(${i},0)" class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 border-emerald-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(0,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - allyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
