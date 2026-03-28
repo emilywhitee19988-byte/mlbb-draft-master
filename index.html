@@ -1,217 +1,424 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MLBB Draft Master • Live</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    body { font-family: 'Segoe UI', system-ui, sans-serif; }
-    .hero-img { width: 52px; height: 52px; object-fit: contain; }
-    .slot { transition: all 0.2s; }
-    .slot:hover { transform: scale(1.05); }
-  </style>
-</head>
-<body class="bg-gray-950 text-white min-h-screen">
-  <div class="max-w-7xl mx-auto p-4">
-    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-      <h1 class="text-4xl font-bold flex items-center gap-3">
-        <span class="text-yellow-400">MLBB</span> DRAFT MASTER
-      </h1>
-      <div class="flex items-center gap-4">
-        <div id="last-updated" class="text-sm text-gray-400 flex items-center gap-1">
-          <i class="fas fa-sync fa-spin"></i> Loading live data...
-        </div>
-        <button onclick="fetchData()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-6 py-2 rounded-2xl font-semibold flex items-center gap-2">
-          <i class="fas fa-refresh"></i> Refresh Data
-        </button>
-      </div>
-    </div>
+<script>
+  let heroesData = [];
+  let allyPicks = [];
+  let enemyPicks = [];
+  let addMode = 0;
+  let dataLoaded = false;
 
-    <div class="flex border-b border-gray-700 mb-6">
-      <button onclick="switchTab(0)" id="tab-0" class="tab-button px-8 py-4 font-semibold text-lg border-b-4 border-yellow-400 text-yellow-400">📊 Tier List</button>
-      <button onclick="switchTab(1)" id="tab-1" class="tab-button px-8 py-4 font-semibold text-lg">🎯 Draft Picker</button>
-    </div>
+  const API_URL = 'https://mlbb-stats.rone.dev/api/heroes/rank';
 
-    <!-- Tier List -->
-    <div id="content-0">
-      <input id="search-tier" type="text" placeholder="Search hero..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400" onkeyup="filterTierTable()">
-      <div class="bg-gray-900 rounded-3xl overflow-hidden border border-gray-700">
-        <table class="w-full">
-          <thead class="bg-gray-800">
-            <tr>
-              <th class="text-left pl-6">Hero</th>
-              <th onclick="sortTierTable(1)" class="cursor-pointer hover:text-yellow-400">Win Rate <i class="fas fa-sort"></i></th>
-              <th onclick="sortTierTable(2)" class="cursor-pointer hover:text-yellow-400">Pick Rate <i class="fas fa-sort"></i></th>
-              <th onclick="sortTierTable(3)" class="cursor-pointer hover:text-yellow-400">Ban Rate <i class="fas fa-sort"></i></th>
-              <th class="text-right pr-6">Tier</th>
-            </tr>
-          </thead>
-          <tbody id="hero-table" class="text-sm"></tbody>
-        </table>
-      </div>
-    </div>
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
 
-    <!-- Draft Picker (full version) -->
-    <div id="content-1" class="hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-5">
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users"></i> Your Team (Allies)</h2>
-          <div id="ally-slots" class="grid grid-cols-5 gap-3"></div>
-        </div>
-        <div class="lg:col-span-5">
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-skull"></i> Enemy Team</h2>
-          <div id="enemy-slots" class="grid grid-cols-5 gap-3"></div>
-        </div>
-        <div class="lg:col-span-2">
-          <h2 class="text-2xl font-bold mb-4">🔥 Optimal Picks</h2>
-          <div id="recommendations" class="bg-gray-900 rounded-3xl p-4 border border-gray-700 min-h-[400px]"></div>
-        </div>
-      </div>
+  function safeNum(value, fallback = 0) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
 
-      <div class="mt-10">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold">Hero Pool • Click to add</h3>
-          <div class="flex gap-3">
-            <button onclick="setAddMode(0)" id="mode-0" class="add-mode-btn px-5 py-2 rounded-2xl bg-emerald-600 text-white font-semibold">Add to Your Team</button>
-            <button onclick="setAddMode(1)" id="mode-1" class="add-mode-btn px-5 py-2 rounded-2xl bg-red-600 text-white font-semibold">Add to Enemy Team</button>
-          </div>
-        </div>
-        <input id="search-draft" type="text" placeholder="Filter heroes..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-4 focus:outline-none focus:border-yellow-400" onkeyup="renderHeroPool()">
-        <div id="hero-pool" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 min-h-[300px]"></div>
-      </div>
-    </div>
+  function updateLastUpdated(message = null, isError = false) {
+    const el = document.getElementById('last-updated');
+    if (message) {
+      el.innerHTML = isError
+        ? `❌ ${message}`
+        : `✅ ${message}`;
+      return;
+    }
+    el.innerHTML = `✅ Live • ${new Date().toLocaleTimeString()}`;
+  }
 
-    <!-- Build Modal -->
-    <div onclick="if(event.target.id==='build-modal')hideBuildModal()" id="build-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      <div onclick="event.stopImmediatePropagation()" class="bg-gray-900 rounded-3xl max-w-md w-full mx-4 p-6">
-        <h2 id="modal-hero-name" class="text-3xl font-bold mb-4"></h2>
-        <div id="modal-build" class="grid grid-cols-3 gap-4"></div>
-        <button onclick="hideBuildModal()" class="mt-6 w-full bg-yellow-400 text-black py-3 rounded-2xl font-bold">Close</button>
-      </div>
-    </div>
-  </div>
+  async function fetchData() {
+    const loadingEl = document.getElementById('last-updated');
+    loadingEl.innerHTML = `<i class="fas fa-sync fa-spin"></i> Fetching live ranked data...`;
 
-  <script>
-    let heroesData = [];
-    let allyPicks = [];
-    let enemyPicks = [];
-    let addMode = 0;
-    let dataLoaded = false;
+    try {
+      const res = await fetch(API_URL, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
 
-    async function fetchData() {
-      const loadingEl = document.getElementById('last-updated');
-      loadingEl.innerHTML = `<i class="fas fa-sync fa-spin"></i> Fetching live ranked data...`;
-      try {
-        const res = await fetch('https://mlbb-stats.rone.dev/api/heroes/rank');
-        const json = await res.json();
-        
-        // ✅ EXACT LIVE STRUCTURE (verified today)
-        heroesData = json.data.records.map(r => {
-          const inner = r.data;
-          const h = inner.main_hero.data;
-          return {
-            name: h.name,
-            image: h.head,
-            winRate: (r.main_hero_win_rate * 100).toFixed(1),
-            pickRate: (r.main_hero_appearance_rate * 100).toFixed(1),
-            banRate: (r.main_hero_ban_rate * 100).toFixed(1),
-            rawWin: r.main_hero_win_rate
-          };
-        });
-
-        dataLoaded = true;
-        renderTierTable();
-        renderHeroPool();
-        renderRecommendations();
-        loadingEl.innerHTML = `✅ Live • ${new Date().toLocaleTimeString()}`;
-      } catch(e) {
-        loadingEl.innerHTML = `❌ Failed – click Refresh`;
-        console.error(e);
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
       }
+
+      const json = await res.json();
+      const records = json?.data?.records;
+
+      if (!Array.isArray(records)) {
+        throw new Error('Invalid API response: data.records missing');
+      }
+
+      const parsedHeroes = records.map((record) => {
+        const inner = record?.data;
+        const hero = inner?.main_hero?.data;
+
+        if (!inner || !hero?.name) {
+          return null;
+        }
+
+        const rawWin = safeNum(inner?.main_hero_win_rate, 0);
+        const rawPick = safeNum(inner?.main_hero_appearance_rate, 0);
+        const rawBan = safeNum(inner?.main_hero_ban_rate, 0);
+
+        return {
+          name: String(hero.name),
+          image: hero.head || '',
+          winRate: (rawWin * 100).toFixed(1),
+          pickRate: (rawPick * 100).toFixed(1),
+          banRate: (rawBan * 100).toFixed(1),
+          rawWin,
+          rawPick,
+          rawBan
+        };
+      }).filter(Boolean);
+
+      if (!parsedHeroes.length) {
+        throw new Error('No heroes were parsed from the API');
+      }
+
+      heroesData = parsedHeroes.sort((a, b) => a.name.localeCompare(b.name));
+      dataLoaded = true;
+
+      renderTierTable(heroesData);
+      renderSlots();
+      renderHeroPool();
+      renderRecommendations();
+      updateLastUpdated();
+    } catch (error) {
+      console.error('fetchData error:', error);
+      dataLoaded = false;
+      heroesData = [];
+
+      document.getElementById('hero-table').innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-8 text-red-400">
+            Failed to load hero stats
+          </td>
+        </tr>
+      `;
+
+      document.getElementById('hero-pool').innerHTML = `
+        <p class="col-span-full text-red-400 text-center py-8">
+          Failed to load hero pool
+        </p>
+      `;
+
+      document.getElementById('recommendations').innerHTML = `
+        <p class="text-red-400 text-center py-8">
+          Failed to load recommendations
+        </p>
+      `;
+
+      renderSlots();
+      updateLastUpdated(error.message || 'Failed to load live data', true);
+    }
+  }
+
+  function getTier(rawWin) {
+    if (rawWin >= 0.55) return { label: 'S+', color: 'text-emerald-400' };
+    if (rawWin >= 0.53) return { label: 'S', color: 'text-yellow-400' };
+    if (rawWin >= 0.51) return { label: 'A', color: 'text-amber-400' };
+    return { label: 'B', color: 'text-gray-300' };
+  }
+
+  function renderTierTable(data) {
+    const tbody = document.getElementById('hero-table');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-8 text-gray-400">
+            No hero data available
+          </td>
+        </tr>
+      `;
+      return;
     }
 
-    function renderTierTable() {
-      const tbody = document.getElementById('hero-table');
-      tbody.innerHTML = heroesData.map(hero => {
-        const tier = hero.rawWin >= 0.55 ? 'S+' : hero.rawWin >= 0.53 ? 'S' : hero.rawWin >= 0.51 ? 'A' : 'B';
-        const color = hero.rawWin >= 0.55 ? 'text-emerald-400' : hero.rawWin >= 0.53 ? 'text-yellow-400' : 'text-amber-400';
-        return `<tr class="border-b border-gray-800 hover:bg-gray-800"><td class="flex items-center gap-3 pl-6"><img src="${hero.image}" class="hero-img rounded-lg"> <span>${hero.name}</span></td><td class="font-mono">${hero.winRate}% <span class="${color}">▲</span></td><td class="font-mono text-blue-400">${hero.pickRate}%</td><td class="font-mono text-red-400">${hero.banRate}%</td><td class="text-right pr-6"><span class="px-5 py-1 text-xs font-bold rounded-2xl bg-gray-800 ${color}">${tier}</span></td></tr>`;
-      }).join('');
+    tbody.innerHTML = data.map((hero) => {
+      const tier = getTier(hero.rawWin);
+
+      return `
+        <tr class="border-b border-gray-800 hover:bg-gray-800">
+          <td class="pl-6 py-3">
+            <div class="flex items-center gap-3">
+              <img src="${escapeHtml(hero.image)}" class="hero-img rounded-lg" alt="${escapeHtml(hero.name)}">
+              <span>${escapeHtml(hero.name)}</span>
+            </div>
+          </td>
+          <td class="font-mono">${hero.winRate}% <span class="${tier.color}">▲</span></td>
+          <td class="font-mono text-blue-400">${hero.pickRate}%</td>
+          <td class="font-mono text-red-400">${hero.banRate}%</td>
+          <td class="text-right pr-6">
+            <span class="px-5 py-1 text-xs font-bold rounded-2xl bg-gray-800 ${tier.color}">
+              ${tier.label}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function sortTierTable(column) {
+    const sorted = [...heroesData].sort((a, b) => {
+      if (column === 1) return b.rawWin - a.rawWin;
+      if (column === 2) return b.rawPick - a.rawPick;
+      if (column === 3) return b.rawBan - a.rawBan;
+      return a.name.localeCompare(b.name);
+    });
+
+    renderTierTable(sorted);
+  }
+
+  function filterTierTable() {
+    const term = document.getElementById('search-tier').value.trim().toLowerCase();
+    const filtered = heroesData.filter((hero) =>
+      hero.name.toLowerCase().includes(term)
+    );
+    renderTierTable(filtered);
+  }
+
+  function setAddMode(mode) {
+    addMode = mode;
+    document.querySelectorAll('.add-mode-btn').forEach((button, index) => {
+      button.style.opacity = index === mode ? '1' : '0.5';
+    });
+  }
+
+  function buildSlotCard(hero, team, index, borderClass) {
+    return `
+      <div onclick="showBuildModal(${index}, ${team})"
+           class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 ${borderClass}">
+        <img src="${escapeHtml(hero.image)}" class="hero-img mx-auto" alt="${escapeHtml(hero.name)}">
+        <p class="text-xs mt-1">${escapeHtml(hero.name)}</p>
+        <span onclick="event.stopPropagation(); removePick(${team}, ${index});"
+              class="text-red-400 text-xs cursor-pointer">
+          ✕
+        </span>
+      </div>
+    `;
+  }
+
+  function buildEmptySlots(count) {
+    return Array(count).fill(`
+      <div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">
+        Empty slot
+      </div>
+    `);
+  }
+
+  function renderSlots() {
+    const allyHtml = allyPicks
+      .map((hero, index) => buildSlotCard(hero, 0, index, 'border-emerald-500'))
+      .concat(buildEmptySlots(5 - allyPicks.length));
+
+    const enemyHtml = enemyPicks
+      .map((hero, index) => buildSlotCard(hero, 1, index, 'border-red-500'))
+      .concat(buildEmptySlots(5 - enemyPicks.length));
+
+    document.getElementById('ally-slots').innerHTML = allyHtml.join('');
+    document.getElementById('enemy-slots').innerHTML = enemyHtml.join('');
+  }
+
+  function renderHeroPool() {
+    const poolEl = document.getElementById('hero-pool');
+
+    if (!dataLoaded) {
+      poolEl.innerHTML = `
+        <p class="col-span-full text-yellow-400 text-center py-12 flex items-center justify-center gap-2">
+          <i class="fas fa-spinner fa-spin"></i> Loading heroes...
+        </p>
+      `;
+      return;
     }
 
-    function sortTierTable(n) {
-      const sorted = [...heroesData].sort((a,b) => n===1 ? b.rawWin - a.rawWin : n===2 ? parseFloat(b.pickRate) - parseFloat(a.pickRate) : parseFloat(b.banRate) - parseFloat(a.banRate));
-      renderTierTable(sorted);
+    const term = (document.getElementById('search-draft').value || '').trim().toLowerCase();
+    const pickedNames = new Set([...allyPicks, ...enemyPicks].map((hero) => hero.name));
+
+    const filtered = heroesData.filter((hero) => {
+      return !pickedNames.has(hero.name) && hero.name.toLowerCase().includes(term);
+    });
+
+    if (!filtered.length) {
+      poolEl.innerHTML = `
+        <p class="col-span-full text-gray-400 text-center py-8">
+          No heroes match or all heroes are already picked
+        </p>
+      `;
+      return;
     }
 
-    function filterTierTable() {
-      const term = document.getElementById('search-tier').value.toLowerCase();
-      const filtered = heroesData.filter(h => h.name.toLowerCase().includes(term));
-      const tbody = document.getElementById('hero-table');
-      tbody.innerHTML = filtered.map(hero => {
-        const tier = hero.rawWin >= 0.55 ? 'S+' : hero.rawWin >= 0.53 ? 'S' : hero.rawWin >= 0.51 ? 'A' : 'B';
-        const color = hero.rawWin >= 0.55 ? 'text-emerald-400' : hero.rawWin >= 0.53 ? 'text-yellow-400' : 'text-amber-400';
-        return `<tr class="border-b border-gray-800 hover:bg-gray-800"><td class="flex items-center gap-3 pl-6"><img src="${hero.image}" class="hero-img rounded-lg"> <span>${hero.name}</span></td><td class="font-mono">${hero.winRate}% <span class="${color}">▲</span></td><td class="font-mono text-blue-400">${hero.pickRate}%</td><td class="font-mono text-red-400">${hero.banRate}%</td><td class="text-right pr-6"><span class="px-5 py-1 text-xs font-bold rounded-2xl bg-gray-800 ${color}">${tier}</span></td></tr>`;
-      }).join('');
+    poolEl.innerHTML = filtered.map((hero) => `
+      <div onclick='addHeroToTeam(${JSON.stringify(hero.name)})'
+           class="bg-gray-800 hover:bg-gray-700 rounded-2xl p-2 flex flex-col items-center cursor-pointer">
+        <img src="${escapeHtml(hero.image)}" class="hero-img" alt="${escapeHtml(hero.name)}">
+        <p class="text-xs mt-2 text-center">${escapeHtml(hero.name)}</p>
+      </div>
+    `).join('');
+  }
+
+  function addHeroToTeam(heroName) {
+    if (!dataLoaded) return;
+
+    const hero = heroesData.find((h) => h.name === heroName);
+    if (!hero) return;
+
+    const alreadyPicked = [...allyPicks, ...enemyPicks].some((h) => h.name === hero.name);
+    if (alreadyPicked) return;
+
+    if (addMode === 0) {
+      if (allyPicks.length >= 5) {
+        alert('Your team is full!');
+        return;
+      }
+      allyPicks.push(hero);
+    } else {
+      if (enemyPicks.length >= 5) {
+        alert('Enemy team is full!');
+        return;
+      }
+      enemyPicks.push(hero);
     }
 
-    // Draft Picker functions (full working version)
-    function setAddMode(mode) { addMode = mode; document.querySelectorAll('.add-mode-btn').forEach((b,i) => b.style.opacity = i === mode ? '1' : '0.5'); }
-    function renderSlots() {
-      const allyHTML = allyPicks.map((hero,i) => `<div onclick="showBuildModal(${i},0)" class="slot bg-gray-800 rounded-2xl p-3 text-center cursor-pointer border-2 border-emerald-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(0,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - allyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
-      document.getElementById('ally-slots').innerHTML = allyHTML.join('');
-      const enemyHTML = enemyPicks.map((hero,i) => `<div class="slot bg-gray-800 rounded-2xl p-3 text-center border-2 border-red-500"><img src="${hero.image}" class="hero-img mx-auto"><p class="text-xs mt-1">${hero.name}</p><span onclick="event.stopImmediatePropagation();removePick(1,${i});" class="text-red-400 text-xs">✕</span></div>`).concat(Array(5 - enemyPicks.length).fill(`<div class="slot bg-gray-900 border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center text-gray-400 text-sm">Empty slot</div>`));
-      document.getElementById('enemy-slots').innerHTML = enemyHTML.join('');
+    renderSlots();
+    renderHeroPool();
+    renderRecommendations();
+  }
+
+  function removePick(team, index) {
+    if (team === 0) {
+      allyPicks.splice(index, 1);
+    } else {
+      enemyPicks.splice(index, 1);
     }
-    function renderHeroPool() {
-      const poolEl = document.getElementById('hero-pool');
-      if (!dataLoaded) return poolEl.innerHTML = `<p class="col-span-full text-yellow-400 text-center py-12 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading 132 heroes…</p>`;
-      const term = (document.getElementById('search-draft').value || '').toLowerCase();
-      const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
-      const filtered = heroesData.filter(h => !pickedNames.includes(h.name) && h.name.toLowerCase().includes(term));
-      poolEl.innerHTML = filtered.length ? filtered.map(hero => `<div onclick="addHeroToTeam('${hero.name}')" class="bg-gray-800 hover:bg-gray-700 rounded-2xl p-2 flex flex-col items-center cursor-pointer"><img src="${hero.image}" class="hero-img"><p class="text-xs mt-2 text-center">${hero.name}</p></div>`).join('') : `<p class="col-span-full text-gray-400 text-center py-8">No heroes match or all picked</p>`;
+
+    renderSlots();
+    renderHeroPool();
+    renderRecommendations();
+  }
+
+  function scoreHero(hero) {
+    let score = hero.rawWin;
+
+    const allyNames = allyPicks.map((h) => h.name.toLowerCase());
+    const enemyNames = enemyPicks.map((h) => h.name.toLowerCase());
+
+    if (allyNames.length) {
+      score += 0.002 * Math.min(allyNames.length, 5);
     }
-    function addHeroToTeam(heroName) {
-      if (!dataLoaded) return;
-      const hero = heroesData.find(h => h.name === heroName);
-      if (!hero) return;
-      if (addMode === 0 && allyPicks.length < 5) allyPicks.push(hero);
-      else if (addMode === 1 && enemyPicks.length < 5) enemyPicks.push(hero);
-      else return alert("Team is full!");
-      renderSlots(); renderHeroPool(); renderRecommendations();
+
+    if (enemyNames.length) {
+      score += 0.001 * Math.min(enemyNames.length, 5);
     }
-    function removePick(team, index) {
-      if (team === 0) allyPicks.splice(index, 1); else enemyPicks.splice(index, 1);
-      renderSlots(); renderHeroPool(); renderRecommendations();
+
+    return score;
+  }
+
+  function renderRecommendations() {
+    const recEl = document.getElementById('recommendations');
+
+    if (!dataLoaded) {
+      recEl.innerHTML = `
+        <p class="text-yellow-400 text-center py-8 flex items-center justify-center gap-2">
+          <i class="fas fa-spinner fa-spin"></i> Loading optimal picks...
+        </p>
+      `;
+      return;
     }
-    function renderRecommendations() {
-      const recEl = document.getElementById('recommendations');
-      if (!dataLoaded) return recEl.innerHTML = `<p class="text-yellow-400 text-center py-8 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin"></i> Loading optimal picks…</p>`;
-      const pickedNames = [...allyPicks, ...enemyPicks].map(h => h.name);
-      const available = heroesData.filter(h => !pickedNames.includes(h.name));
-      const sorted = available.sort((a,b) => b.rawWin - a.rawWin).slice(0, 8);
-      let html = `<p class="text-xs text-gray-400 mb-3">Based on current meta + your team</p>`;
-      sorted.forEach(h => html += `<div onclick="addHeroToTeam('${h.name}')" class="flex gap-3 bg-gray-800 hover:bg-gray-700 rounded-2xl p-3 mb-2 cursor-pointer"><img src="${h.image}" class="hero-img"><div class="flex-1"><div class="font-semibold">${h.name}</div><div class="text-emerald-400 text-sm">${h.winRate}% WR • Great into this comp</div></div></div>`);
-      recEl.innerHTML = html || '<p class="text-gray-400">All heroes picked!</p>';
+
+    const pickedNames = new Set([...allyPicks, ...enemyPicks].map((hero) => hero.name));
+
+    const available = heroesData.filter((hero) => !pickedNames.has(hero.name));
+    const sorted = [...available]
+      .sort((a, b) => scoreHero(b) - scoreHero(a))
+      .slice(0, 8);
+
+    if (!sorted.length) {
+      recEl.innerHTML = `
+        <p class="text-gray-400 text-center py-8">
+          All heroes are picked
+        </p>
+      `;
+      return;
     }
-    function showBuildModal(index, team) {
-      const hero = team === 0 ? allyPicks[index] : enemyPicks[index];
-      if (!hero) return;
-      document.getElementById('modal-hero-name').innerHTML = `${hero.name} • Sample Optimal Build`;
-      const items = [{name:"Demon Hunter Sword", icon:"🗡️"},{name:"Golden Staff", icon:"⚡"},{name:"Malefic Roar", icon:"🔥"},{name:"Blade of Despair", icon:"💀"},{name:"Endless Battle", icon:"⚔️"},{name:"Immortality", icon:"🛡️"}];
-      document.getElementById('modal-build').innerHTML = items.map(i => `<div class="text-center"><div class="text-4xl mb-1">${i.icon}</div><p class="text-xs">${i.name}</p></div>`).join('');
-      document.getElementById('build-modal').classList.remove('hidden');
+
+    let html = `
+      <p class="text-xs text-gray-400 mb-3">
+        Based on current live win rate and open draft slots
+      </p>
+    `;
+
+    html += sorted.map((hero) => `
+      <div onclick='addHeroToTeam(${JSON.stringify(hero.name)})'
+           class="flex gap-3 bg-gray-800 hover:bg-gray-700 rounded-2xl p-3 mb-2 cursor-pointer">
+        <img src="${escapeHtml(hero.image)}" class="hero-img" alt="${escapeHtml(hero.name)}">
+        <div class="flex-1">
+          <div class="font-semibold">${escapeHtml(hero.name)}</div>
+          <div class="text-emerald-400 text-sm">${hero.winRate}% WR • strong current meta pick</div>
+        </div>
+      </div>
+    `).join('');
+
+    recEl.innerHTML = html;
+  }
+
+  function showBuildModal(index, team) {
+    const hero = team === 0 ? allyPicks[index] : enemyPicks[index];
+    if (!hero) return;
+
+    document.getElementById('modal-hero-name').textContent = `${hero.name} • Sample Optimal Build`;
+
+    const items = [
+      { name: 'Demon Hunter Sword', icon: '🗡️' },
+      { name: 'Golden Staff', icon: '⚡' },
+      { name: 'Malefic Roar', icon: '🔥' },
+      { name: 'Blade of Despair', icon: '💀' },
+      { name: 'Endless Battle', icon: '⚔️' },
+      { name: 'Immortality', icon: '🛡️' }
+    ];
+
+    document.getElementById('modal-build').innerHTML = items.map((item) => `
+      <div class="text-center">
+        <div class="text-4xl mb-1">${item.icon}</div>
+        <p class="text-xs">${escapeHtml(item.name)}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('build-modal').classList.remove('hidden');
+  }
+
+  function hideBuildModal() {
+    document.getElementById('build-modal').classList.add('hidden');
+  }
+
+  function switchTab(tabIndex) {
+    document.querySelectorAll('#content-0, #content-1').forEach((el) => {
+      el.classList.add('hidden');
+    });
+
+    document.getElementById(`content-${tabIndex}`).classList.remove('hidden');
+
+    document.querySelectorAll('.tab-button').forEach((button, index) => {
+      button.classList.toggle('border-yellow-400', index === tabIndex);
+      button.classList.toggle('text-yellow-400', index === tabIndex);
+    });
+
+    if (tabIndex === 1) {
+      renderSlots();
+      renderHeroPool();
+      renderRecommendations();
     }
-    function hideBuildModal() { document.getElementById('build-modal').classList.add('hidden'); }
-    function switchTab(n) {
-      document.querySelectorAll('#content-0, #content-1').forEach(el => el.classList.add('hidden'));
-      document.getElementById('content-' + n).classList.remove('hidden');
-      document.querySelectorAll('.tab-button').forEach((b,i) => { b.classList.toggle('border-yellow-400', i===n); b.classList.toggle('text-yellow-400', i===n); });
-      if (n === 1) { renderSlots(); renderHeroPool(); renderRecommendations(); }
-    }
-    window.onload = () => { fetchData(); setAddMode(0); };
-  </script>
-</body>
-</html>
+  }
+
+  window.onload = () => {
+    renderSlots();
+    setAddMode(0);
+    fetchData();
+  };
+</script>
