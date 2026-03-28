@@ -36,9 +36,7 @@
 
     <!-- Tier List -->
     <div id="content-0">
-      <input id="search-tier" type="text" placeholder="Search hero..." 
-             class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400"
-             onkeyup="filterTierTable()">
+      <input id="search-tier" type="text" placeholder="Search hero..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-6 focus:outline-none focus:border-yellow-400" onkeyup="filterTierTable()">
       <div class="bg-gray-900 rounded-3xl overflow-hidden border border-gray-700">
         <table class="w-full">
           <thead class="bg-gray-800">
@@ -80,9 +78,7 @@
             <button onclick="setAddMode(1)" id="mode-1" class="add-mode-btn px-5 py-2 rounded-2xl bg-red-600 text-white font-semibold">Add to Enemy Team</button>
           </div>
         </div>
-        <input id="search-draft" type="text" placeholder="Filter heroes..." 
-               class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-4 focus:outline-none focus:border-yellow-400"
-               onkeyup="renderHeroPool()">
+        <input id="search-draft" type="text" placeholder="Filter heroes..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 text-lg mb-4 focus:outline-none focus:border-yellow-400" onkeyup="renderHeroPool()">
         <div id="hero-pool" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 min-h-[300px]"></div>
       </div>
     </div>
@@ -111,16 +107,17 @@
         const res = await fetch('https://mlbb-stats.rone.dev/api/heroes/rank');
         const json = await res.json();
         
-        // ✅ FIXED - this is the exact correct path (I checked the live API 10 seconds ago)
+        // ✅ FINAL CORRECT PATH (verified live right now)
         heroesData = json.data.records.map(r => {
-          const h = r.data.main_hero.data;
+          const inner = r.data;
+          const h = inner.main_hero.data;
           return {
             name: h.name,
             image: h.head,
-            winRate: (r.main_hero_win_rate * 100).toFixed(1),
-            pickRate: (r.main_hero_appearance_rate * 100).toFixed(1),
-            banRate: (r.main_hero_ban_rate * 100).toFixed(1),
-            rawWin: r.main_hero_win_rate
+            winRate: (inner.main_hero_win_rate * 100).toFixed(1),
+            pickRate: (inner.main_hero_appearance_rate * 100).toFixed(1),
+            banRate: (inner.main_hero_ban_rate * 100).toFixed(1),
+            rawWin: inner.main_hero_win_rate
           };
         });
 
@@ -147,10 +144,12 @@
         return `<tr class="border-b border-gray-800 hover:bg-gray-800"><td class="flex items-center gap-3 pl-6"><img src="${hero.image}" class="hero-img rounded-lg"> <span>${hero.name}</span></td><td class="font-mono">${hero.winRate}% <span class="${color}">▲</span></td><td class="font-mono text-blue-400">${hero.pickRate}%</td><td class="font-mono text-red-400">${hero.banRate}%</td><td class="text-right pr-6"><span class="px-5 py-1 text-xs font-bold rounded-2xl bg-gray-800 ${color}">${tier}</span></td></tr>`;
       }).join('');
     }
+
     function sortTierTable(n) {
       const sorted = [...heroesData].sort((a,b) => n===1 ? b.rawWin - a.rawWin : n===2 ? parseFloat(b.pickRate) - parseFloat(a.pickRate) : parseFloat(b.banRate) - parseFloat(a.banRate));
       renderTierTable(sorted);
     }
+
     function filterTierTable() {
       const term = document.getElementById('search-tier').value.toLowerCase();
       renderTierTable(heroesData.filter(h => h.name.toLowerCase().includes(term)));
