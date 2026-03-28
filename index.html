@@ -699,7 +699,7 @@
       'Thamuz': ['Tough Boots', 'Cursed Helmet', 'Blade of Despair', 'Dominance Ice', 'Athenas Shield', 'Immortality'],
       'X.Borg': ['Tough Boots', 'Cursed Helmet', 'Blade of Despair', 'Dominance Ice', 'Athenas Shield', 'Immortality'],
       'Yin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
-      'Zhuxin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality'],
+      'Zhuxin': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
       'Zilong': ['Tough Boots', 'Haas Claws', 'Blade of Despair', 'Malefic Roar', 'Hunter Strike', 'Immortality'],
       'Sora': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
       
@@ -719,7 +719,7 @@
       'Gloo': ['Tough Boots', 'Cursed Helmet', 'Dominance Ice', 'Antique Cuirass', 'Athenas Shield', 'Immortality'],
       'Chip': ['Magic Shoes', 'Cursed Helmet', 'Dominance Ice', 'Athenas Shield', 'Necklace of Durance', 'Immortality'],
       'Arlott': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Endless Battle', 'Immortality'],
-      'Zhuxin': ['Tough Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Queens Wings', 'Immortality']
+      'Zhuxin': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings']
     };
 
     function getHeroBuild(heroName, enemyTanks = 0) {
@@ -839,7 +839,7 @@
       'Thamuz': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
       'X.Borg': ['Karrie', 'Beatrix', 'Melissa', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
       'Yin': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
-      'Zhuxin': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
+      'Zhuxin': ['Lancelot', 'Gusion', 'Fanny', 'Hayabusa', 'Ling', 'Chou', 'Benedetta', 'Aamon', 'Saber', 'Helcurt', 'Paquito', 'Arlott'],
       'Zilong': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
       'Sora': ['Beatrix', 'Melissa', 'Karrie', 'Chou', 'Paquito', 'Wanwan', 'Granger', 'Esmeralda', 'Yu Zhong', 'Ruby', 'Fredrinn', 'Julian'],
       
@@ -1061,22 +1061,33 @@
     };
 
     async function fetchHeroData() {
-      const apiUrl = `https://mlbb-stats.rone.dev/api/heroes/rank?` +
+      // Build official API URL
+      const officialApiUrl = `https://mlbb-stats.rone.dev/api/heroes/rank?` +
         `day_filter=7&` +
         `rank_filter=${currentRankFilter}&` +
         `page_size=132&` +
         `sorts_field=main_hero_win_rate&` +
         `sorts_order=desc`;
       
-      console.log(`🎯 Fetching ${currentRankFilter} rank stats from official API...`);
+      // Use CORS proxy to access the API
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(officialApiUrl)}`;
+      
+      console.log(`🎯 Fetching ${currentRankFilter.toUpperCase()} rank stats...`);
+      console.log(`📡 API URL:`, officialApiUrl);
       
       try {
-        // Try official API first
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        // Fetch from official API via CORS proxy
+        const response = await fetch(proxyUrl);
+        const proxyData = await response.json();
+        
+        if (!proxyData.contents) {
+          throw new Error('CORS proxy returned no data');
+        }
+        
+        const data = JSON.parse(proxyData.contents);
         
         if (data && data.data && data.data.records && data.data.records.length > 0) {
-          console.log(`✅ API Success: ${data.data.records.length} heroes loaded`);
+          console.log(`✅ API Success: ${data.data.records.length} heroes loaded for ${currentRankFilter} rank`);
           
           // Map API data to our hero structure
           allHeroes = data.data.records.map(record => {
@@ -1099,12 +1110,15 @@
             };
           });
           
-          console.log(`✅ Loaded ${allHeroes.length} heroes for ${currentRankFilter} rank`);
+          console.log(`✅ Successfully loaded ${allHeroes.length} heroes for ${currentRankFilter} rank`);
+          console.log(`📊 Sample data - Gloo:`, allHeroes.find(h => h.name === 'Gloo'));
+          
         } else {
-          throw new Error('Invalid API response');
+          throw new Error('Invalid API response format');
         }
       } catch (error) {
-        console.warn('⚠️ API failed, using hardcoded March 2026 stats:', error.message);
+        console.warn(`⚠️ API failed for ${currentRankFilter} rank:`, error.message);
+        console.log('📦 Using hardcoded March 2026 stats as fallback');
         
         // Fallback to hardcoded stats
         allHeroes = Object.keys(HERO_DATABASE).map(name => {
@@ -1130,7 +1144,16 @@
 
     function updateStats() {
       const now = new Date();
-      document.getElementById('last-updated').textContent = `Updated: ${now.toLocaleTimeString()}`;
+      const rankLabel = {
+        'all': 'All Ranks',
+        'epic': 'Epic',
+        'legend': 'Legend',
+        'mythic': 'Mythic',
+        'honor': 'Mythical Honor',
+        'glory': 'Mythical Glory'
+      }[currentRankFilter] || currentRankFilter.toUpperCase();
+      
+      document.getElementById('last-updated').textContent = `Updated: ${now.toLocaleTimeString()} • ${rankLabel}`;
       document.getElementById('hero-count').textContent = `${allHeroes.length} Heroes`;
     }
 
@@ -1199,6 +1222,18 @@
       document.querySelectorAll('[data-rank]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.rank === rank);
       });
+      
+      // Show loading indicator
+      const tierListContainer = document.getElementById('tier-list-container');
+      if (tierListContainer) {
+        tierListContainer.innerHTML = `
+          <div class="text-center py-12">
+            <div class="text-4xl mb-4">⏳</div>
+            <div class="text-xl font-bold text-amber-400 mb-2">Loading ${rank.toUpperCase()} rank stats...</div>
+            <div class="text-sm text-slate-400">Fetching data from official MLBB API</div>
+          </div>
+        `;
+      }
       
       // Refetch data with new rank filter
       console.log(`🎯 Switching to ${rank} rank...`);
