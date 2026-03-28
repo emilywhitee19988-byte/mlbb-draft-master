@@ -18,7 +18,7 @@
     
     .orbitron { font-family: 'Orbitron', sans-serif; }
     
-    /* Compact hero card styles - similar to mlbb.io */
+    /* Compact hero card styles */
     .hero-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
@@ -44,43 +44,48 @@
       background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 100%);
     }
     
-    /* Compact hero image - like mlbb.io */
-    .hero-img-tier {
+    /* Hero portrait images - circular like mlbb.io */
+    .hero-portrait {
       width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      display: block;
+      border: 2px solid #475569;
+    }
+    
+    .hero-portrait-tier {
+      width: 56px;
       height: 56px;
-      object-fit: cover;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
     }
     
-    .hero-img-draft {
-      width: 100%;
-      height: 48px;
-      object-fit: cover;
-      border-radius: 4px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
+    .hero-portrait-draft {
+      width: 44px;
+      height: 44px;
     }
     
-    .hero-img-slot {
-      width: 100%;
+    .hero-portrait-slot {
+      width: 64px;
       height: 64px;
-      object-fit: cover;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
     }
     
-    /* Image loading placeholder */
-    .img-placeholder {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #64748b;
+    .hero-portrait-counter {
+      width: 48px;
+      height: 48px;
+    }
+    
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 50%;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
     }
     
     /* Draft slot styles */
@@ -556,7 +561,7 @@
       <div class="max-w-4xl mx-auto">
         <div class="matchup-card mb-4">
           <h2 class="text-2xl font-bold mb-2">Win Predictor</h2>
-          <p class="text-slate-400 text-sm mb-4">AI-powered win prediction based on team compositions</p>
+          <p class="text-slate-400 text-sm mb-4">AI-powered win prediction</p>
           
           <div id="matchup-result" class="hidden">
             <div class="mb-4">
@@ -578,7 +583,7 @@
           </div>
           
           <div id="matchup-empty" class="text-center py-12 text-slate-400 text-sm">
-            Go to Draft & Builds tab to select heroes
+            Go to Draft & Builds to select heroes
           </div>
         </div>
       </div>
@@ -589,7 +594,7 @@
       <div class="max-w-4xl mx-auto">
         <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-700 text-center">
           <h2 class="text-2xl font-bold mb-3">Counter Picks</h2>
-          <p class="text-slate-400 text-sm mb-4">Find the best heroes to counter your enemies</p>
+          <p class="text-slate-400 text-sm mb-4">Find heroes to counter your enemies</p>
           
           <input 
             id="search-counter" 
@@ -611,7 +616,7 @@
     // ==================== GLOBAL STATE ====================
     
     let allHeroes = [];
-    let heroImageMap = {}; // Store actual hero images from API
+    let heroImageMap = {};
     let currentQueueType = 'solo';
     let currentTierRole = 'All';
     let currentDraftRole = 'All';
@@ -671,14 +676,14 @@
       'Wind of Nature': { icon: '🌪️', stats: '2s Immunity' },
       'Winter Truncheon': { icon: '❄️', stats: '2s Freeze' },
       'Immortality': { icon: '🛡️', stats: 'Revive' },
-      'Cursed Helmet': { icon: '🪖', stats: '+1200 HP, Burns' },
+      'Cursed Helmet': { icon: '🪖', stats: '+1200 HP' },
       'Antique Cuirass': { icon: '🛡️', stats: '+920 HP, +54 Phys Def' },
       'Athenas Shield': { icon: '🔰', stats: '+900 HP, +62 Magic Def' },
       'Dominance Ice': { icon: '🧊', stats: '+500 Mana, +70 Phys Def' },
-      'Clock of Destiny': { icon: '⏰', stats: '+60 Magic Power, +615 HP' },
-      'Lightning Truncheon': { icon: '⚡', stats: '+75 Magic Power, +10% CDR' },
-      'Holy Crystal': { icon: '💎', stats: '+100 Magic Power, +25% Bonus' },
-      'Hunter Strike': { icon: '⚡', stats: '+80 Phys ATK, +10% CDR' },
+      'Clock of Destiny': { icon: '⏰', stats: '+60 Magic Power' },
+      'Lightning Truncheon': { icon: '⚡', stats: '+75 Magic Power' },
+      'Holy Crystal': { icon: '💎', stats: '+100 Magic Power' },
+      'Hunter Strike': { icon: '⚡', stats: '+80 Phys ATK' },
       'Blade of Despair': { icon: '⚔️', stats: '+160 Phys ATK' }
     };
 
@@ -695,17 +700,8 @@
     function showLoading() {
       ['s', 'a', 'b', 'c', 'd'].forEach(tier => {
         document.getElementById(`tier-grid-${tier}`).innerHTML = 
-          '<div class="col-span-full text-center py-6"><div class="loading text-amber-400 text-xs">Loading...</div></div>';
+          '<div class="col-span-full text-center py-6"><div class="loading text-amber-400 text-xs">Loading heroes...</div></div>';
       });
-    }
-
-    function getHeroInitial(name) {
-      return name.charAt(0).toUpperCase();
-    }
-
-    function getHeroImage(heroName) {
-      // Return stored image URL or fallback
-      return heroImageMap[heroName] || null;
     }
 
     async function fetchHeroData() {
@@ -715,15 +711,17 @@
         const data = await response.json();
         
         if (data && data.data && data.data.records && data.data.records.length > 0) {
-          // Map API data and store images
           const apiMap = {};
+          
+          // Store hero images and data
           data.data.records.forEach(record => {
             const hero = record.data.main_hero.data;
-            const heroImage = hero.head || hero.image || null;
             
-            // Store image URL
-            if (heroImage) {
-              heroImageMap[hero.name] = heroImage;
+            // Store image - prioritize head over image
+            if (hero.head) {
+              heroImageMap[hero.name] = hero.head;
+            } else if (hero.image) {
+              heroImageMap[hero.name] = hero.image;
             }
             
             apiMap[hero.name] = {
@@ -768,7 +766,7 @@
           });
           
         } else {
-          // Complete fallback
+          // Fallback
           allHeroes = Object.keys(HERO_DATABASE).map(name => {
             const baseWR = 48 + Math.random() * 6;
             return {
@@ -789,7 +787,6 @@
         
       } catch (error) {
         console.error('Error:', error);
-        // Fallback
         allHeroes = Object.keys(HERO_DATABASE).map(name => {
           const baseWR = 48 + Math.random() * 6;
           return {
@@ -845,6 +842,10 @@
       return currentQueueType === 'solo' ? hero.banRateSolo : hero.banRateStack;
     }
 
+    function getHeroImage(heroName) {
+      return heroImageMap[heroName] || null;
+    }
+
     // ==================== TIER LIST ====================
     
     function renderTierList() {
@@ -856,14 +857,12 @@
         return matchesSearch && matchesRole;
       });
 
-      // Group by tier
       const tierGroups = { s: [], a: [], b: [], c: [], d: [] };
       filtered.forEach(hero => {
         const tier = getTier(getWinRate(hero));
         tierGroups[tier].push(hero);
       });
 
-      // Sort and render
       Object.keys(tierGroups).forEach(tier => {
         tierGroups[tier].sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)));
       });
@@ -883,11 +882,13 @@
             const imageUrl = getHeroImage(hero.name);
             
             return `
-              <div class="hero-card tier-badge-${tier} rounded-lg p-2 cursor-pointer" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
-                ${imageUrl ? 
-                  `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-tier mb-1" onerror="this.outerHTML='<div class=\\'hero-img-tier img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-                  `<div class="hero-img-tier img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-                }
+              <div class="hero-card tier-badge-${tier} rounded-lg p-2 text-center" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
+                <div class="flex justify-center mb-1">
+                  ${imageUrl ? 
+                    `<img src="${imageUrl}" alt="${hero.name}" class="hero-portrait hero-portrait-tier">` :
+                    `<div class="hero-portrait hero-portrait-tier skeleton"></div>`
+                  }
+                </div>
                 <p class="text-xs font-bold truncate" title="${hero.name}">${hero.name}</p>
                 <p class="text-emerald-400 text-xs font-semibold">${winRate}%</p>
               </div>
@@ -928,10 +929,12 @@
           ${allyPicks[i] ? (() => {
             const imageUrl = getHeroImage(allyPicks[i].name);
             return `
-              ${imageUrl ?
-                `<img src="${imageUrl}" alt="${allyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(allyPicks[i].name)}</div>'">` :
-                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(allyPicks[i].name)}</div>`
-              }
+              <div class="flex justify-center mb-1">
+                ${imageUrl ?
+                  `<img src="${imageUrl}" alt="${allyPicks[i].name}" class="hero-portrait hero-portrait-slot">` :
+                  `<div class="hero-portrait hero-portrait-slot skeleton"></div>`
+                }
+              </div>
               <p class="font-semibold text-xs">${allyPicks[i].name}</p>
               <p class="text-xs text-slate-400">${allyPicks[i].role}</p>
               <button onclick="removeHero('ally', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
@@ -947,10 +950,12 @@
           ${enemyPicks[i] ? (() => {
             const imageUrl = getHeroImage(enemyPicks[i].name);
             return `
-              ${imageUrl ?
-                `<img src="${imageUrl}" alt="${enemyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(enemyPicks[i].name)}</div>'">` :
-                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(enemyPicks[i].name)}</div>`
-              }
+              <div class="flex justify-center mb-1">
+                ${imageUrl ?
+                  `<img src="${imageUrl}" alt="${enemyPicks[i].name}" class="hero-portrait hero-portrait-slot">` :
+                  `<div class="hero-portrait hero-portrait-slot skeleton"></div>`
+                }
+              </div>
               <p class="font-semibold text-xs">${enemyPicks[i].name}</p>
               <p class="text-xs text-slate-400">${enemyPicks[i].role}</p>
               <button onclick="removeHero('enemy', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
@@ -980,11 +985,13 @@
       pool.innerHTML = filtered.map(hero => {
         const imageUrl = getHeroImage(hero.name);
         return `
-          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-            }
+          <div class="hero-card rounded-lg p-1.5 text-center" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
+            <div class="flex justify-center mb-1">
+              ${imageUrl ?
+                `<img src="${imageUrl}" alt="${hero.name}" class="hero-portrait hero-portrait-draft">` :
+                `<div class="hero-portrait hero-portrait-draft skeleton"></div>`
+              }
+            </div>
             <p class="text-xs font-semibold truncate" title="${hero.name}">${hero.name}</p>
             <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
           </div>
@@ -1059,7 +1066,7 @@
       const container = document.getElementById('recommendations');
       
       if (allyPicks.filter(Boolean).length === 0 && enemyPicks.filter(Boolean).length === 0) {
-        container.innerHTML = '<p class="text-slate-400 text-xs">Pick heroes to see recommendations...</p>';
+        container.innerHTML = '<p class="text-slate-400 text-xs">Pick heroes...</p>';
         return;
       }
       
@@ -1087,16 +1094,14 @@
           <div class="recommendation-card rounded-lg p-2 cursor-pointer" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
             <div class="flex items-center gap-2">
               ${imageUrl ?
-                `<img src="${imageUrl}" alt="${hero.name}" class="w-10 h-10 rounded object-cover" onerror="this.outerHTML='<div class=\\'w-10 h-10 rounded img-placeholder text-sm\\'>${getHeroInitial(hero.name)}</div>'">` :
-                `<div class="w-10 h-10 rounded img-placeholder text-sm">${getHeroInitial(hero.name)}</div>`
+                `<img src="${imageUrl}" alt="${hero.name}" class="w-10 h-10 rounded-full object-cover border-2 border-slate-600">` :
+                `<div class="w-10 h-10 rounded-full skeleton border-2 border-slate-600"></div>`
               }
               <div class="flex-1 min-w-0">
                 <h4 class="font-bold text-xs truncate">${hero.name}</h4>
                 <p class="text-xs text-slate-400">${reason}</p>
               </div>
-              <div class="text-right">
-                <p class="text-emerald-400 font-bold text-xs">${getWinRate(hero)}%</p>
-              </div>
+              <p class="text-emerald-400 font-bold text-xs">${getWinRate(hero)}%</p>
             </div>
           </div>
         `;
@@ -1128,39 +1133,37 @@
       if (hero.role === 'Marksman') {
         if (totalTanky >= 3) {
           buildItems = ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Corrosion Scythe', 'Wind of Nature'];
-          buildReason = `🎯 ANTI-TANK: ${totalTanky} tanky enemies. % HP damage build.`;
+          buildReason = `🎯 ANTI-TANK: ${totalTanky} tanky enemies`;
         } else {
           buildItems = ['Swift Boots', 'Scarlet Phantom', 'Berserkers Fury', 'Windtalker', 'Malefic Roar', 'Wind of Nature'];
-          buildReason = `⚡ CRIT BUILD: Squishy enemies. Max burst damage.`;
+          buildReason = `⚡ CRIT BUILD: Squishy enemies`;
         }
       } else if (hero.role === 'Mage') {
         if (totalTanky >= 3) {
           buildItems = ['Tough Boots', 'Clock of Destiny', 'Divine Glaive', 'Holy Crystal', 'Lightning Truncheon', 'Winter Truncheon'];
-          buildReason = `🎯 PENETRATION: ${totalTanky} tanky enemies. Magic PEN focus.`;
+          buildReason = `🎯 PENETRATION: ${totalTanky} tanky`;
         } else {
           buildItems = ['Tough Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Winter Truncheon'];
-          buildReason = `⚡ BURST BUILD: Standard high damage.`;
+          buildReason = `⚡ BURST BUILD`;
         }
       } else if (hero.role === 'Tank') {
         buildItems = ['Warrior Boots', 'Cursed Helmet', 'Antique Cuirass', 'Athenas Shield', 'Dominance Ice', 'Immortality'];
-        buildReason = `🛡️ BALANCED TANK: Armor + Magic Resist.`;
+        buildReason = `🛡️ BALANCED TANK`;
       } else {
         buildItems = ['Warrior Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Athenas Shield', 'Immortality'];
-        buildReason = `⚔️ BALANCED: Damage + Survivability.`;
+        buildReason = `⚔️ BALANCED`;
       }
       
       const imageUrl = getHeroImage(hero.name);
       buildContent.innerHTML = `
-        <div class="mb-3">
-          <div class="flex items-center gap-3 mb-2">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="w-12 h-12 rounded-lg" onerror="this.outerHTML='<div class=\\'w-12 h-12 rounded-lg img-placeholder text-xl\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="w-12 h-12 rounded-lg img-placeholder text-xl">${getHeroInitial(hero.name)}</div>`
-            }
-            <div>
-              <h3 class="text-lg font-bold">${hero.name}</h3>
-              <p class="text-purple-300 text-xs font-semibold">${buildReason}</p>
-            </div>
+        <div class="mb-3 flex items-center gap-3">
+          ${imageUrl ?
+            `<img src="${imageUrl}" alt="${hero.name}" class="w-12 h-12 rounded-full object-cover border-2 border-purple-500">` :
+            `<div class="w-12 h-12 rounded-full skeleton border-2 border-purple-500"></div>`
+          }
+          <div>
+            <h3 class="text-lg font-bold">${hero.name}</h3>
+            <p class="text-purple-300 text-xs font-semibold">${buildReason}</p>
           </div>
         </div>
         
@@ -1234,19 +1237,15 @@
       let analysis = [];
       
       if (yourWinRate >= 60) {
-        analysis.push('<div class="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 text-emerald-300 text-xs"><strong>🎯 Advantage:</strong> Your team is favored!</div>');
+        analysis.push('<div class="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 text-emerald-300 text-xs"><strong>🎯 Advantage</strong></div>');
       } else if (yourWinRate <= 40) {
-        analysis.push('<div class="bg-red-500/20 border border-red-500/50 rounded-lg p-2 text-red-300 text-xs"><strong>⚠️ Disadvantage:</strong> Play safe, look for picks.</div>');
+        analysis.push('<div class="bg-red-500/20 border border-red-500/50 rounded-lg p-2 text-red-300 text-xs"><strong>⚠️ Disadvantage</strong></div>');
       } else {
-        analysis.push('<div class="bg-blue-500/20 border border-blue-500/50 rounded-lg p-2 text-blue-300 text-xs"><strong>⚖️ Even:</strong> Execution matters.</div>');
+        analysis.push('<div class="bg-blue-500/20 border border-blue-500/50 rounded-lg p-2 text-blue-300 text-xs"><strong>⚖️ Even Match</strong></div>');
       }
       
       if (allyTanks === 0 && enemyTanks > 0) {
-        analysis.push('<div class="bg-amber-500/20 border border-amber-500/50 rounded-lg p-2 text-amber-300 text-xs"><strong>🛡️ No Tank:</strong> Stay grouped and kite.</div>');
-      }
-      
-      if (allyDPS < enemyDPS) {
-        analysis.push('<div class="bg-purple-500/20 border border-purple-500/50 rounded-lg p-2 text-purple-300 text-xs"><strong>💥 Less Damage:</strong> Focus picks and objectives.</div>');
+        analysis.push('<div class="bg-amber-500/20 border border-amber-500/50 rounded-lg p-2 text-amber-300 text-xs"><strong>🛡️ No Tank</strong></div>');
       }
       
       analysisDiv.innerHTML = analysis.join('');
@@ -1269,11 +1268,13 @@
       results.innerHTML = filtered.map(hero => {
         const imageUrl = getHeroImage(hero.name);
         return `
-          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="analyzeHero('${hero.name.replace(/'/g, "\\'")}')">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-            }
+          <div class="hero-card rounded-lg p-1.5 text-center" onclick="analyzeHero('${hero.name.replace(/'/g, "\\'")}')">
+            <div class="flex justify-center mb-1">
+              ${imageUrl ?
+                `<img src="${imageUrl}" alt="${hero.name}" class="hero-portrait hero-portrait-counter">` :
+                `<div class="hero-portrait hero-portrait-counter skeleton"></div>`
+              }
+            </div>
             <p class="text-xs font-semibold truncate">${hero.name}</p>
             <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
           </div>
@@ -1299,20 +1300,16 @@
       const analysisDiv = document.getElementById('counter-analysis');
       analysisDiv.classList.remove('hidden');
       analysisDiv.innerHTML = `
-        <div class="mb-6">
-          <div class="flex items-center justify-center gap-3 mb-4">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="w-20 h-20 rounded-lg" onerror="this.outerHTML='<div class=\\'w-20 h-20 rounded-lg img-placeholder text-3xl\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="w-20 h-20 rounded-lg img-placeholder text-3xl">${getHeroInitial(hero.name)}</div>`
-            }
-            <div class="text-left">
-              <h3 class="text-xl font-bold">${hero.name}</h3>
-              <p class="text-slate-400 text-sm">${hero.role}</p>
-              <div class="flex gap-2 mt-1 text-xs">
-                <span class="text-emerald-400 font-semibold">WR: ${getWinRate(hero)}%</span>
-                <span class="text-amber-400 font-semibold">P: ${getPickRate(hero)}%</span>
-                <span class="text-red-400 font-semibold">B: ${getBanRate(hero)}%</span>
-              </div>
+        <div class="mb-6 flex items-center justify-center gap-3">
+          ${imageUrl ?
+            `<img src="${imageUrl}" alt="${hero.name}" class="w-20 h-20 rounded-full object-cover border-4 border-amber-500">` :
+            `<div class="w-20 h-20 rounded-full skeleton border-4 border-amber-500"></div>`
+          }
+          <div class="text-left">
+            <h3 class="text-xl font-bold">${hero.name}</h3>
+            <p class="text-slate-400 text-sm">${hero.role}</p>
+            <div class="flex gap-2 mt-1 text-xs">
+              <span class="text-emerald-400 font-semibold">WR: ${getWinRate(hero)}%</span>
             </div>
           </div>
         </div>
@@ -1324,13 +1321,14 @@
               ${counters.map(h => {
                 const cImageUrl = getHeroImage(h.name);
                 return `
-                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    ${cImageUrl ?
-                      `<img src="${cImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
-                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
-                    }
+                  <div class="hero-card rounded-lg p-1.5 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    <div class="flex justify-center mb-1">
+                      ${cImageUrl ?
+                        `<img src="${cImageUrl}" alt="${h.name}" class="hero-portrait hero-portrait-counter">` :
+                        `<div class="hero-portrait hero-portrait-counter skeleton"></div>`
+                      }
+                    </div>
                     <p class="text-xs font-semibold truncate">${h.name}</p>
-                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
                   </div>
                 `;
               }).join('')}
@@ -1343,13 +1341,14 @@
               ${synergies.map(h => {
                 const sImageUrl = getHeroImage(h.name);
                 return `
-                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    ${sImageUrl ?
-                      `<img src="${sImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
-                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
-                    }
+                  <div class="hero-card rounded-lg p-1.5 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    <div class="flex justify-center mb-1">
+                      ${sImageUrl ?
+                        `<img src="${sImageUrl}" alt="${h.name}" class="hero-portrait hero-portrait-counter">` :
+                        `<div class="hero-portrait hero-portrait-counter skeleton"></div>`
+                      }
+                    </div>
                     <p class="text-xs font-semibold truncate">${h.name}</p>
-                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
                   </div>
                 `;
               }).join('')}
