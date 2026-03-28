@@ -267,21 +267,10 @@
             <span class="text-2xl">👑</span>
             <div>
               <div class="text-xl">S TIER</div>
-              <div class="text-xs font-normal opacity-75">Meta Defining • 54%+ WR</div>
+              <div class="text-xs font-normal opacity-75">Meta Defining • 52%+ WR or High Ban</div>
             </div>
           </div>
           <div id="tier-grid-s" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
-        </div>
-
-        <div class="tier-section mb-6" id="tier-section-situational">
-          <div class="tier-header" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%); border-color: #a855f7; color: #a855f7;">
-            <span class="text-2xl">💡</span>
-            <div>
-              <div class="text-xl">SITUATIONAL</div>
-              <div class="text-xs font-normal opacity-75">High WR + Low PR • Works in specific comps</div>
-            </div>
-          </div>
-          <div id="tier-grid-situational" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
         <div class="tier-section mb-6" id="tier-section-a">
@@ -289,18 +278,18 @@
             <span class="text-2xl">⭐</span>
             <div>
               <div class="text-xl">A TIER</div>
-              <div class="text-xs font-normal opacity-75">Strong Picks • 52-54% WR</div>
+              <div class="text-xs font-normal opacity-75">Strong Picks • 50-52% WR</div>
             </div>
           </div>
           <div id="tier-grid-a" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
         <div class="tier-section mb-6" id="tier-section-b">
-          <div class="tier-header tier-b">
-            <span class="text-2xl">✓</span>
+          <div class="tier-header" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%); border-color: #a855f7; color: #a855f7;">
+            <span class="text-2xl">💡</span>
             <div>
               <div class="text-xl">B TIER</div>
-              <div class="text-xs font-normal opacity-75">Balanced • 50-52% WR</div>
+              <div class="text-xs font-normal opacity-75">Situational • 52%+ WR, <0.9% PR (Low Pick)</div>
             </div>
           </div>
           <div id="tier-grid-b" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
@@ -311,21 +300,10 @@
             <span class="text-2xl">⚠️</span>
             <div>
               <div class="text-xl">C TIER</div>
-              <div class="text-xs font-normal opacity-75">Situational • 48-50% WR</div>
+              <div class="text-xs font-normal opacity-75">Don't Pick Unless Mained • <50% WR</div>
             </div>
           </div>
           <div id="tier-grid-c" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
-        </div>
-
-        <div class="tier-section mb-6" id="tier-section-d">
-          <div class="tier-header tier-d">
-            <span class="text-2xl">📉</span>
-            <div>
-              <div class="text-xl">D TIER</div>
-              <div class="text-xs font-normal opacity-75">Needs Buff • <48% WR</div>
-            </div>
-          </div>
-          <div id="tier-grid-d" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
       </div>
     </div>
@@ -573,7 +551,7 @@
       'Popol and Kupa': ['Swift Boots', 'Demon Hunter Sword', 'Malefic Roar', 'Blade of Despair', 'Hunter Strike', 'Immortality'],
       
       // === MAGES (26) ===
-      'Kagura': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
+      'Kagura': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Genius Wand', 'Divine Glaive', 'Holy Crystal'],
       'Pharsa': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
       'Valentina': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Immortality'],
       'Xavier': ['Arcane Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Blood Wings'],
@@ -1104,23 +1082,60 @@
   'Rafaela': { wr: 47.4, pr: 0.8, br: 3.7 }
 };
 
+    // MPL PRO TOURNAMENT STATS (Season 10) - VERY DIFFERENT from Solo Queue!
+    const PRO_TOURNAMENT_STATS = {
+      // Top pro picks - notice how different these are!
+      'Esmeralda': { wr: 48.15, pr: 62.79, br: 58 },  // 62% pick in pro vs 1.4% in solo!
+      'Beatrix': { wr: 65.38, pr: 45.35, br: 39 },  // 65% WR in pro!
+      'Claude': { wr: 49.37, pr: 45.93, br: 42 },
+      'Valentina': { wr: 48.44, pr: 37.21, br: 38 },
+      'Yve': { wr: 42.86, pr: 36.63, br: 29 },
+      'Mathilda': { wr: 49.12, pr: 33.14, br: 36 },
+      'Chou': { wr: 47.27, pr: 31.98, br: 31 },
+      'Lylia': { wr: 58.49, pr: 30.81, br: 25 },
+      'Julian': { wr: 52.00, pr: 29.07, br: 16 },
+      'Faramis': { wr: 62.50, pr: 27.91, br: 26 },  // 62% WR in pro vs 47% in solo!
+      'Ling': { wr: 48.94, pr: 27.33, br: 12 },
+      'Wanwan': { wr: 60.87, pr: 26.74, br: 27 },
+      'Akai': { wr: 57.78, pr: 26.16, br: 26 },
+      'Grock': { wr: 51.28, pr: 22.67, br: 13 },
+      'Ruby': { wr: 42.11, pr: 22.09, br: 19 },
+      'Balmond': { wr: 56.76, pr: 21.51, br: 19 },
+      'Lolita': { wr: 51.61, pr: 18.02, br: 17 },
+      'Pharsa': { wr: 43.33, pr: 17.44, br: 14 },
+      'Franco': { wr: 60.71, pr: 16.28, br: 10 },
+      'Brody': { wr: 39.29, pr: 16.28, br: 10 },
+      'Fredrinn': { wr: 48.15, pr: 15.7, br: 17 },
+      'Masha': { wr: 44.44, pr: 15.7, br: 11 },  // LOW in pro vs 56% WR in solo!
+      'Melissa': { wr: 44.44, pr: 15.7, br: 16 },
+      'Irithel': { wr: 33.33, pr: 15.7, br: 7 },
+      'Aamon': { wr: 65.38, pr: 15.12, br: 14 },
+      'Lancelot': { wr: 65.38, pr: 15.12, br: 13 },
+      'Lunox': { wr: 53.85, pr: 15.12, br: 18 },
+      'Fanny': { wr: 34.62, pr: 15.12, br: 19 },
+      'Karina': { wr: 56.00, pr: 14.53, br: 15 },
+      'Atlas': { wr: 54.55, pr: 12.79, br: 12 },
+      'Diggie': { wr: 40.91, pr: 12.79, br: 9 }
+    };
+
     async function fetchHeroData() {
       console.log(`📦 Loading ${currentRankFilter.toUpperCase()} rank stats...`);
       
       // SKIP API - Use hardcoded stats for instant loading (no freezing!)
-      // The API times out frequently, so we use accurate March 2026 stats instead
+      // Solo queue: MARCH_2026_STATS | Pro Play: PRO_TOURNAMENT_STATS (MPL data)
       allHeroes = Object.keys(HERO_DATABASE).map(name => {
-        const stats = MARCH_2026_STATS[name] || { wr: 49, pr: 5, br: 2 };
+        const soloStats = MARCH_2026_STATS[name] || { wr: 49, pr: 5, br: 2 };
+        const proStats = PRO_TOURNAMENT_STATS[name] || soloStats;  // Use pro data if available
         const role = HERO_DATABASE[name];
         
         return {
           name, role,
-          winRateSolo: stats.wr.toFixed(1),
-          pickRateSolo: stats.pr.toFixed(1),
-          banRateSolo: stats.br.toFixed(1),
-          winRatePro: (stats.wr + 1.5).toFixed(1),
-          pickRatePro: (stats.pr * 1.8).toFixed(1),
-          banRatePro: (stats.br * 2.2).toFixed(1)
+          winRateSolo: soloStats.wr.toFixed(1),
+          pickRateSolo: soloStats.pr.toFixed(1),
+          banRateSolo: soloStats.br.toFixed(1),
+          winRatePro: proStats.wr.toFixed(1),
+          pickRatePro: proStats.pr.toFixed(1),
+          banRatePro: proStats.br.toFixed(1)
         };
       });
       
@@ -1143,24 +1158,18 @@
         const pr = parseFloat(hero.pickRateSolo || hero.pickRatePro || 5);
         const br = parseFloat(hero.banRateSolo || hero.banRatePro || 0);
         
-        // S-tier: 52%+ WR OR 40%+ ban rate (perma-bans)
-        if (wr >= 52 || br >= 40) return 's';
+        // S-TIER: Meta-defining (52%+ WR with HIGH PR >1.2% OR perma-ban 40%+)
+        if ((wr >= 52 && pr > 1.2) || br >= 40) return 's';
         
-        // SITUATIONAL: High WR + Low PR (niche picks)
-        // Example: Diggie (54% WR, 7% PR) vs Floryn (54% WR, 12% PR)
-        if (wr >= 52 && pr < 8 && br < 15) return 'situational';
-        
-        // A-tier: 50-52% WR
+        // A-TIER: Strong reliable picks (50-52% WR)
         if (wr >= 50) return 'a';
         
-        // B-tier: 48-50% WR
-        if (wr >= 48) return 'b';
+        // B-TIER (SITUATIONAL): Niche but powerful (52%+ WR, LOW PR <0.9%)
+        // Based on statistical analysis: <0.9% = bottom 33% pick rate
+        if (wr >= 52 && pr < 0.9) return 'b';
         
-        // C-tier: 46-48% WR
-        if (wr >= 46) return 'c';
-        
-        // D-tier: <46% WR
-        return 'd';
+        // C-TIER: Don't pick unless mained (<50% WR)
+        return 'c';
       } else {
         // Legacy support: just winRate number
         const wr = parseFloat(winRate);
@@ -1657,9 +1666,15 @@
       const roleCounters = counters.slice(0, 4);
       const generalCounters = counters.slice(4, 12);
       
-      alert(`${hero.name} (${modeName})
-━━━━━━━━━━━━━━━━━
+      // Create formatted popup message
+      const message = `
+╔═══════════════════════════════════════╗
+   ${hero.name.toUpperCase()}
+   ${modeName}
+╚═══════════════════════════════════════╝
+
 📊 STATS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Role: ${hero.role}
 Tier: ${tier}
 Win Rate: ${getWinRate(hero)}%
@@ -1667,13 +1682,19 @@ Pick Rate: ${getPickRate(hero)}%
 Ban Rate: ${getBanRate(hero)}%
 
 🛡️ PRO BUILD (Zathong 2026)
-${build.join(' → ')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${build.map((item, i) => `${i + 1}. ${item}`).join('\n')}
 
 ⚔️ LANE COUNTERS (${hero.role})
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${roleCounters.length > 0 ? roleCounters.join(', ') : 'No specific counters'}
 
 🎯 GENERAL COUNTERS
-${generalCounters.length > 0 ? generalCounters.join(', ') : 'No general counters'}`);
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${generalCounters.length > 0 ? generalCounters.join(', ') : 'No general counters'}
+      `.trim();
+      
+      alert(message);
     }
 
     function switchTab(tabName) {
