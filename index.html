@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MLBB Draft Master - Beat the Meta</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
@@ -16,10 +18,13 @@
     
     .orbitron { font-family: 'Orbitron', sans-serif; }
     
+    /* Compact hero card styles - similar to mlbb.io */
     .hero-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
       transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
       cursor: pointer;
     }
     
@@ -29,27 +34,73 @@
       box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
     }
     
-    /* Circular hero portrait */
-    .hero-portrait {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 2px solid #475569;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    .hero-card.selected-ally {
+      border-color: #3b82f6;
+      background: linear-gradient(145deg, #1e3a8a 0%, #1e40af 100%);
     }
     
-    .hero-portrait-56 { width: 56px; height: 56px; }
-    .hero-portrait-48 { width: 48px; height: 48px; }
-    .hero-portrait-64 { width: 64px; height: 64px; }
-    .hero-portrait-44 { width: 44px; height: 44px; }
+    .hero-card.selected-enemy {
+      border-color: #ef4444;
+      background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 100%);
+    }
     
-    .tier-badge-s { border-color: #fbbf24; }
-    .tier-badge-a { border-color: #10b981; }
-    .tier-badge-b { border-color: #3b82f6; }
-    .tier-badge-c { border-color: #8b5cf6; }
-    .tier-badge-d { border-color: #6b7280; }
+    /* Compact hero image - like mlbb.io */
+    .hero-img-tier {
+      width: 100%;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      display: block;
+    }
     
+    .hero-img-draft {
+      width: 100%;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      display: block;
+    }
+    
+    .hero-img-slot {
+      width: 100%;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      display: block;
+    }
+    
+    /* Image loading placeholder */
+    .img-placeholder {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+    
+    /* Draft slot styles */
+    .draft-slot {
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 2px dashed #475569;
+      min-height: 100px;
+      transition: all 0.3s;
+    }
+    
+    .draft-slot.filled {
+      border-style: solid;
+      border-color: #3b82f6;
+    }
+    
+    .draft-slot.enemy.filled {
+      border-color: #ef4444;
+    }
+    
+    /* Role tabs */
     .role-tab {
       background: #1e293b;
       border: 2px solid #334155;
@@ -69,6 +120,7 @@
       font-weight: 700;
     }
     
+    /* Queue type selector */
     .queue-selector {
       background: #1e293b;
       border: 2px solid #334155;
@@ -86,6 +138,11 @@
       border-color: #8b5cf6;
       color: white;
       font-weight: 700;
+    }
+    
+    /* Tier section styles */
+    .tier-section {
+      margin-bottom: 1.5rem;
     }
     
     .tier-header {
@@ -130,7 +187,15 @@
       color: #6b7280;
     }
     
+    .tier-badge-s { border-color: #fbbf24; }
+    .tier-badge-a { border-color: #10b981; }
+    .tier-badge-b { border-color: #3b82f6; }
+    .tier-badge-c { border-color: #8b5cf6; }
+    .tier-badge-d { border-color: #6b7280; }
+    
+    /* Tab navigation */
     .tab-btn {
+      position: relative;
       padding: 0.875rem 1.5rem;
       font-size: 1rem;
       font-weight: 600;
@@ -142,12 +207,16 @@
       cursor: pointer;
     }
     
-    .tab-btn:hover { color: #fbbf24; }
+    .tab-btn:hover {
+      color: #fbbf24;
+    }
+    
     .tab-btn.active {
       color: #fbbf24;
       border-bottom-color: #fbbf24;
     }
     
+    /* Search input */
     .search-input {
       background: rgba(30, 41, 59, 0.6);
       border: 2px solid #334155;
@@ -161,27 +230,13 @@
       box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
     }
     
-    .draft-slot {
-      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-      border: 2px dashed #475569;
-      min-height: 100px;
-      transition: all 0.3s;
-    }
-    
-    .draft-slot.filled {
-      border-style: solid;
-      border-color: #3b82f6;
-    }
-    
-    .draft-slot.enemy.filled {
-      border-color: #ef4444;
-    }
-    
+    /* Win rate predictor */
     .winrate-meter {
       height: 40px;
       background: linear-gradient(to right, #ef4444 0%, #6b7280 50%, #3b82f6 100%);
       border-radius: 20px;
       position: relative;
+      overflow: hidden;
     }
     
     .winrate-indicator {
@@ -194,6 +249,7 @@
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
     }
     
+    /* Build card */
     .build-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
@@ -217,6 +273,35 @@
       font-size: 1.25rem;
     }
     
+    /* Loading animation */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .loading {
+      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
     .recommendation-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border-left: 4px solid #10b981;
@@ -227,15 +312,28 @@
       transform: translateX(4px);
       border-left-color: #fbbf24;
     }
-    
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+    .empty-tier {
+      padding: 1.5rem;
+      text-align: center;
+      color: #64748b;
+      font-style: italic;
+      font-size: 0.875rem;
+    }
+
+    /* Matchup predictor */
+    .matchup-card {
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
   </style>
 </head>
 <body class="text-white">
   
-  <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b-2 border-amber-500 sticky top-0 z-50">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b-2 border-amber-500 sticky top-0 z-50 backdrop-blur-lg">
     <div class="max-w-7xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
         <div>
@@ -254,25 +352,28 @@
 
   <div class="max-w-7xl mx-auto px-4 py-4">
     
+    <!-- Tab Navigation -->
     <div class="flex border-b border-slate-700 mb-4 overflow-x-auto">
       <button onclick="switchTab('tier-list')" id="tab-tier-list" class="tab-btn active whitespace-nowrap">
-        📊 Tier List
+        <span>📊</span> Tier List
       </button>
       <button onclick="switchTab('draft-picker')" id="tab-draft-picker" class="tab-btn whitespace-nowrap">
-        🎯 Draft & Builds
+        <span>🎯</span> Draft & Builds
       </button>
       <button onclick="switchTab('matchup')" id="tab-matchup" class="tab-btn whitespace-nowrap">
-        ⚔️ Win Predictor
+        <span>⚔️</span> Win Predictor
       </button>
       <button onclick="switchTab('counters')" id="tab-counters" class="tab-btn whitespace-nowrap">
-        🛡️ Counters
+        <span>🛡️</span> Counters
       </button>
     </div>
 
     <!-- TIER LIST TAB -->
     <div id="content-tier-list" class="tab-content">
       
+      <!-- Controls -->
       <div class="mb-4 space-y-3">
+        <!-- Queue Type -->
         <div class="flex gap-2 flex-wrap items-center">
           <span class="text-xs font-semibold text-slate-400">Queue:</span>
           <button onclick="setQueueType('solo')" class="queue-selector active rounded-lg px-3 py-1.5 text-xs font-semibold" data-queue="solo">
@@ -283,6 +384,7 @@
           </button>
         </div>
 
+        <!-- Search -->
         <input 
           id="search-tier" 
           type="text" 
@@ -291,6 +393,7 @@
           oninput="filterTierList()"
         >
         
+        <!-- Role Filter -->
         <div class="flex gap-2 flex-wrap">
           <button onclick="filterRole('All')" class="role-tab active rounded-lg px-3 py-1.5 text-xs font-semibold" data-role="All">All</button>
           <button onclick="filterRole('Tank')" class="role-tab rounded-lg px-3 py-1.5 text-xs font-semibold" data-role="Tank">🛡️ Tank</button>
@@ -302,8 +405,10 @@
         </div>
       </div>
       
+      <!-- Tier Sections - Compact layout -->
       <div id="tier-list-container">
-        <div class="tier-section mb-6" id="tier-section-s">
+        <!-- S Tier -->
+        <div class="tier-section" id="tier-section-s">
           <div class="tier-header tier-s">
             <span class="text-2xl">👑</span>
             <div>
@@ -314,7 +419,8 @@
           <div id="tier-grid-s" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <div class="tier-section mb-6" id="tier-section-a">
+        <!-- A Tier -->
+        <div class="tier-section" id="tier-section-a">
           <div class="tier-header tier-a">
             <span class="text-2xl">⭐</span>
             <div>
@@ -325,7 +431,8 @@
           <div id="tier-grid-a" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <div class="tier-section mb-6" id="tier-section-b">
+        <!-- B Tier -->
+        <div class="tier-section" id="tier-section-b">
           <div class="tier-header tier-b">
             <span class="text-2xl">✓</span>
             <div>
@@ -336,7 +443,8 @@
           <div id="tier-grid-b" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <div class="tier-section mb-6" id="tier-section-c">
+        <!-- C Tier -->
+        <div class="tier-section" id="tier-section-c">
           <div class="tier-header tier-c">
             <span class="text-2xl">⚠️</span>
             <div>
@@ -347,7 +455,8 @@
           <div id="tier-grid-c" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <div class="tier-section mb-6" id="tier-section-d">
+        <!-- D Tier -->
+        <div class="tier-section" id="tier-section-d">
           <div class="tier-header tier-d">
             <span class="text-2xl">📉</span>
             <div>
@@ -360,27 +469,156 @@
       </div>
     </div>
 
-    <!-- Other tabs hidden by default -->
+    <!-- DRAFT & BUILDS TAB -->
     <div id="content-draft-picker" class="tab-content hidden">
-      <p class="text-center text-slate-400 py-12">Draft Picker - Coming soon</p>
+      
+      <!-- Draft Board -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        
+        <!-- Your Team -->
+        <div class="lg:col-span-1">
+          <div class="bg-gradient-to-br from-blue-900/30 to-blue-950/30 rounded-xl p-4 border-2 border-blue-500/30">
+            <h2 class="text-xl font-bold text-blue-400 mb-3 flex items-center gap-2">
+              <span>🔵</span> Your Team
+            </h2>
+            <div id="ally-slots" class="space-y-2"></div>
+            <button onclick="clearTeam('ally')" class="mt-3 w-full py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold transition-colors">
+              Clear Team
+            </button>
+          </div>
+        </div>
+
+        <!-- Enemy Team -->
+        <div class="lg:col-span-1">
+          <div class="bg-gradient-to-br from-red-900/30 to-red-950/30 rounded-xl p-4 border-2 border-red-500/30">
+            <h2 class="text-xl font-bold text-red-400 mb-3 flex items-center gap-2">
+              <span>🔴</span> Enemy Team
+            </h2>
+            <div id="enemy-slots" class="space-y-2"></div>
+            <button onclick="clearTeam('enemy')" class="mt-3 w-full py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold transition-colors">
+              Clear Team
+            </button>
+          </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="lg:col-span-1">
+          <div class="bg-gradient-to-br from-emerald-900/30 to-emerald-950/30 rounded-xl p-4 border-2 border-emerald-500/30">
+            <h2 class="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2">
+              <span>⭐</span> Smart Picks
+            </h2>
+            <div id="recommendations" class="space-y-2">
+              <p class="text-slate-400 text-xs">Pick heroes to see recommendations...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Adaptive Build -->
+      <div id="build-section" class="hidden mb-6">
+        <div class="bg-gradient-to-br from-purple-900/30 to-purple-950/30 rounded-xl p-4 border-2 border-purple-500/30">
+          <h2 class="text-xl font-bold text-purple-400 mb-3 flex items-center gap-2">
+            <span>🔨</span> Adaptive Build
+          </h2>
+          <div id="build-content"></div>
+        </div>
+      </div>
+
+      <!-- Hero Pool -->
+      <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-bold">Hero Pool</h3>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="setDraftRole('All')" class="role-tab active rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="All">All</button>
+            <button onclick="setDraftRole('Tank')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Tank">Tank</button>
+            <button onclick="setDraftRole('Fighter')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Fighter">Fighter</button>
+            <button onclick="setDraftRole('Assassin')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Assassin">Assassin</button>
+            <button onclick="setDraftRole('Mage')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Mage">Mage</button>
+            <button onclick="setDraftRole('Marksman')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Marksman">MM</button>
+            <button onclick="setDraftRole('Support')" class="role-tab rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="Support">Support</button>
+          </div>
+        </div>
+        
+        <input 
+          id="search-draft" 
+          type="text" 
+          placeholder="🔍 Search hero..." 
+          class="search-input w-full rounded-lg px-4 py-2 mb-3 text-sm text-white"
+          oninput="renderDraftPool()"
+        >
+        
+        <div id="draft-pool" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 max-h-80 overflow-y-auto"></div>
+      </div>
     </div>
 
+    <!-- MATCHUP PREDICTOR TAB -->
     <div id="content-matchup" class="tab-content hidden">
-      <p class="text-center text-slate-400 py-12">Win Predictor - Coming soon</p>
+      <div class="max-w-4xl mx-auto">
+        <div class="matchup-card mb-4">
+          <h2 class="text-2xl font-bold mb-2">Win Predictor</h2>
+          <p class="text-slate-400 text-sm mb-4">AI-powered win prediction based on team compositions</p>
+          
+          <div id="matchup-result" class="hidden">
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-blue-400 font-semibold text-sm">Your Team</span>
+                <span class="text-red-400 font-semibold text-sm">Enemy Team</span>
+              </div>
+              <div class="winrate-meter">
+                <div id="winrate-indicator" class="winrate-indicator"></div>
+              </div>
+              <div class="flex items-center justify-between mt-2 text-sm">
+                <span id="your-winrate" class="text-blue-400 font-bold">50%</span>
+                <span class="text-slate-500">vs</span>
+                <span id="enemy-winrate" class="text-red-400 font-bold">50%</span>
+              </div>
+            </div>
+            
+            <div id="matchup-analysis" class="space-y-3"></div>
+          </div>
+          
+          <div id="matchup-empty" class="text-center py-12 text-slate-400 text-sm">
+            Go to Draft & Builds tab to select heroes
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- COUNTERS TAB -->
     <div id="content-counters" class="tab-content hidden">
-      <p class="text-center text-slate-400 py-12">Counter Picks - Coming soon</p>
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-700 text-center">
+          <h2 class="text-2xl font-bold mb-3">Counter Picks</h2>
+          <p class="text-slate-400 text-sm mb-4">Find the best heroes to counter your enemies</p>
+          
+          <input 
+            id="search-counter" 
+            type="text" 
+            placeholder="🔍 Search hero..." 
+            class="search-input w-full rounded-lg px-4 py-3 mb-4 text-sm text-white"
+            oninput="searchCounterHero()"
+          >
+          
+          <div id="counter-results" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-6"></div>
+          <div id="counter-analysis" class="hidden"></div>
+        </div>
+      </div>
     </div>
 
   </div>
 
   <script>
+    // ==================== GLOBAL STATE ====================
+    
     let allHeroes = [];
+    let heroImageMap = {}; // Store actual hero images from API
     let currentQueueType = 'solo';
     let currentTierRole = 'All';
+    let currentDraftRole = 'All';
+    let allyPicks = [];
+    let enemyPicks = [];
 
-    // Hero database with local image paths
+    // Complete hero database - 132 heroes
     const HERO_DATABASE = {
       'Akai': 'Tank', 'Atlas': 'Tank', 'Aulus': 'Tank', 'Balmond': 'Tank', 'Barats': 'Tank',
       'Baxia': 'Tank', 'Belerick': 'Tank', 'Edith': 'Tank', 'Esmeralda': 'Tank', 'Franco': 'Tank',
@@ -417,15 +655,57 @@
       'Floryn': 'Support', 'Mathilda': 'Support', 'Rafaela': 'Support'
     };
 
-    // Convert hero name to image filename
-    function getHeroImage(heroName) {
-      const filename = heroName.replace(/\s+/g, '_').replace(/[.']/g, '').toLowerCase();
-      return `/heroes/${filename}.png`;
-    }
+    // Items database
+    const ITEMS = {
+      'Scarlet Phantom': { icon: '🗡️', stats: '+40% Crit, +20% Crit DMG' },
+      'Berserkers Fury': { icon: '⚔️', stats: '+25% Crit, +40% Crit DMG' },
+      'Windtalker': { icon: '💨', stats: '+20% Crit, +40% AS' },
+      'Demon Hunter Sword': { icon: '👹', stats: '+25% AS, 9% HP DMG' },
+      'Malefic Roar': { icon: '🔥', stats: '+35% Phys PEN' },
+      'Divine Glaive': { icon: '✨', stats: '+40% Magic PEN' },
+      'Golden Staff': { icon: '📿', stats: '+30% AS' },
+      'Corrosion Scythe': { icon: '⛏️', stats: '+30% AS, Slow' },
+      'Swift Boots': { icon: '👢', stats: '+15% AS' },
+      'Warrior Boots': { icon: '👟', stats: '+22 Phys Def' },
+      'Tough Boots': { icon: '🥾', stats: '+22 Magic Def' },
+      'Wind of Nature': { icon: '🌪️', stats: '2s Immunity' },
+      'Winter Truncheon': { icon: '❄️', stats: '2s Freeze' },
+      'Immortality': { icon: '🛡️', stats: 'Revive' },
+      'Cursed Helmet': { icon: '🪖', stats: '+1200 HP, Burns' },
+      'Antique Cuirass': { icon: '🛡️', stats: '+920 HP, +54 Phys Def' },
+      'Athenas Shield': { icon: '🔰', stats: '+900 HP, +62 Magic Def' },
+      'Dominance Ice': { icon: '🧊', stats: '+500 Mana, +70 Phys Def' },
+      'Clock of Destiny': { icon: '⏰', stats: '+60 Magic Power, +615 HP' },
+      'Lightning Truncheon': { icon: '⚡', stats: '+75 Magic Power, +10% CDR' },
+      'Holy Crystal': { icon: '💎', stats: '+100 Magic Power, +25% Bonus' },
+      'Hunter Strike': { icon: '⚡', stats: '+80 Phys ATK, +10% CDR' },
+      'Blade of Despair': { icon: '⚔️', stats: '+160 Phys ATK' }
+    };
 
+    // ==================== INITIALIZATION ====================
+    
     async function init() {
+      showLoading();
       await fetchHeroData();
       renderTierList();
+      renderDraftSlots();
+      renderDraftPool();
+    }
+
+    function showLoading() {
+      ['s', 'a', 'b', 'c', 'd'].forEach(tier => {
+        document.getElementById(`tier-grid-${tier}`).innerHTML = 
+          '<div class="col-span-full text-center py-6"><div class="loading text-amber-400 text-xs">Loading...</div></div>';
+      });
+    }
+
+    function getHeroInitial(name) {
+      return name.charAt(0).toUpperCase();
+    }
+
+    function getHeroImage(heroName) {
+      // Return stored image URL or fallback
+      return heroImageMap[heroName] || null;
     }
 
     async function fetchHeroData() {
@@ -434,18 +714,27 @@
           encodeURIComponent('https://mlbb-stats.rone.dev/api/heroes/rank'));
         const data = await response.json();
         
-        if (data && data.data && data.data.records) {
+        if (data && data.data && data.data.records && data.data.records.length > 0) {
+          // Map API data and store images
           const apiMap = {};
-          
           data.data.records.forEach(record => {
             const hero = record.data.main_hero.data;
+            const heroImage = hero.head || hero.image || null;
+            
+            // Store image URL
+            if (heroImage) {
+              heroImageMap[hero.name] = heroImage;
+            }
+            
             apiMap[hero.name] = {
               winRate: ((record.main_hero_win_rate || 0.5) * 100).toFixed(1),
               pickRate: ((record.main_hero_pick_rate || 0.1) * 100).toFixed(1),
-              banRate: ((record.main_hero_ban_rate || 0.05) * 100).toFixed(1)
+              banRate: ((record.main_hero_ban_rate || 0.05) * 100).toFixed(1),
+              rawWin: record.main_hero_win_rate || 0.5
             };
           });
           
+          // Build complete hero list
           allHeroes = Object.keys(HERO_DATABASE).map(name => {
             const role = HERO_DATABASE[name];
             const apiData = apiMap[name];
@@ -459,7 +748,8 @@
                 banRateSolo: apiData.banRate,
                 winRateStack: (parseFloat(apiData.winRate) + 2).toFixed(1),
                 pickRateStack: (parseFloat(apiData.pickRate) * 1.1).toFixed(1),
-                banRateStack: (parseFloat(apiData.banRate) * 1.2).toFixed(1)
+                banRateStack: (parseFloat(apiData.banRate) * 1.2).toFixed(1),
+                rawWin: apiData.rawWin
               };
             } else {
               const baseWR = 48 + Math.random() * 6;
@@ -471,11 +761,14 @@
                 banRateSolo: (1 + Math.random() * 10).toFixed(1),
                 winRateStack: (baseWR + 2).toFixed(1),
                 pickRateStack: (3 + Math.random() * 18).toFixed(1),
-                banRateStack: (2 + Math.random() * 12).toFixed(1)
+                banRateStack: (2 + Math.random() * 12).toFixed(1),
+                rawWin: baseWR / 100
               };
             }
           });
+          
         } else {
+          // Complete fallback
           allHeroes = Object.keys(HERO_DATABASE).map(name => {
             const baseWR = 48 + Math.random() * 6;
             return {
@@ -486,14 +779,17 @@
               banRateSolo: (1 + Math.random() * 10).toFixed(1),
               winRateStack: (baseWR + 2).toFixed(1),
               pickRateStack: (3 + Math.random() * 18).toFixed(1),
-              banRateStack: (2 + Math.random() * 12).toFixed(1)
+              banRateStack: (2 + Math.random() * 12).toFixed(1),
+              rawWin: baseWR / 100
             };
           });
         }
         
         updateStats();
+        
       } catch (error) {
         console.error('Error:', error);
+        // Fallback
         allHeroes = Object.keys(HERO_DATABASE).map(name => {
           const baseWR = 48 + Math.random() * 6;
           return {
@@ -504,7 +800,8 @@
             banRateSolo: (1 + Math.random() * 10).toFixed(1),
             winRateStack: (baseWR + 2).toFixed(1),
             pickRateStack: (3 + Math.random() * 18).toFixed(1),
-            banRateStack: (2 + Math.random() * 12).toFixed(1)
+            banRateStack: (2 + Math.random() * 12).toFixed(1),
+            rawWin: baseWR / 100
           };
         });
         updateStats();
@@ -517,6 +814,8 @@
       document.getElementById('hero-count').textContent = `${allHeroes.length} Heroes`;
     }
 
+    // ==================== HELPER FUNCTIONS ====================
+    
     function getTier(winRate) {
       const wr = parseFloat(winRate);
       if (wr >= 54) return 's';
@@ -538,6 +837,16 @@
       return currentQueueType === 'solo' ? hero.winRateSolo : hero.winRateStack;
     }
 
+    function getPickRate(hero) {
+      return currentQueueType === 'solo' ? hero.pickRateSolo : hero.pickRateStack;
+    }
+
+    function getBanRate(hero) {
+      return currentQueueType === 'solo' ? hero.banRateSolo : hero.banRateStack;
+    }
+
+    // ==================== TIER LIST ====================
+    
     function renderTierList() {
       const searchTerm = document.getElementById('search-tier')?.value.toLowerCase() || '';
       
@@ -547,12 +856,14 @@
         return matchesSearch && matchesRole;
       });
 
+      // Group by tier
       const tierGroups = { s: [], a: [], b: [], c: [], d: [] };
       filtered.forEach(hero => {
         const tier = getTier(getWinRate(hero));
         tierGroups[tier].push(hero);
       });
 
+      // Sort and render
       Object.keys(tierGroups).forEach(tier => {
         tierGroups[tier].sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)));
       });
@@ -563,6 +874,7 @@
         const heroes = tierGroups[tier];
         
         if (heroes.length === 0) {
+          grid.innerHTML = '<div class="empty-tier col-span-full">No heroes</div>';
           section.style.display = 'none';
         } else {
           section.style.display = 'block';
@@ -571,10 +883,11 @@
             const imageUrl = getHeroImage(hero.name);
             
             return `
-              <div class="hero-card tier-badge-${tier} rounded-lg p-2 text-center" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
-                <div class="flex justify-center mb-1">
-                  <img src="${imageUrl}" alt="${hero.name}" class="hero-portrait hero-portrait-56">
-                </div>
+              <div class="hero-card tier-badge-${tier} rounded-lg p-2 cursor-pointer" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
+                ${imageUrl ? 
+                  `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-tier mb-1" onerror="this.outerHTML='<div class=\\'hero-img-tier img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
+                  `<div class="hero-img-tier img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
+                }
                 <p class="text-xs font-bold truncate" title="${hero.name}">${hero.name}</p>
                 <p class="text-emerald-400 text-xs font-semibold">${winRate}%</p>
               </div>
@@ -596,6 +909,456 @@
       renderTierList();
     }
 
+    // ==================== DRAFT SYSTEM ====================
+    
+    function setDraftRole(role) {
+      currentDraftRole = role;
+      document.querySelectorAll('[data-draft-role]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.draftRole === role);
+      });
+      renderDraftPool();
+    }
+
+    function renderDraftSlots() {
+      const allyContainer = document.getElementById('ally-slots');
+      const enemyContainer = document.getElementById('enemy-slots');
+      
+      allyContainer.innerHTML = Array(5).fill(0).map((_, i) => `
+        <div class="draft-slot rounded-lg p-2 text-center ${allyPicks[i] ? 'filled' : ''}">
+          ${allyPicks[i] ? (() => {
+            const imageUrl = getHeroImage(allyPicks[i].name);
+            return `
+              ${imageUrl ?
+                `<img src="${imageUrl}" alt="${allyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(allyPicks[i].name)}</div>'">` :
+                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(allyPicks[i].name)}</div>`
+              }
+              <p class="font-semibold text-xs">${allyPicks[i].name}</p>
+              <p class="text-xs text-slate-400">${allyPicks[i].role}</p>
+              <button onclick="removeHero('ally', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
+            `;
+          })() : `
+            <div class="text-slate-500 py-6 text-xs">Empty</div>
+          `}
+        </div>
+      `).join('');
+      
+      enemyContainer.innerHTML = Array(5).fill(0).map((_, i) => `
+        <div class="draft-slot enemy rounded-lg p-2 text-center ${enemyPicks[i] ? 'filled' : ''}">
+          ${enemyPicks[i] ? (() => {
+            const imageUrl = getHeroImage(enemyPicks[i].name);
+            return `
+              ${imageUrl ?
+                `<img src="${imageUrl}" alt="${enemyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(enemyPicks[i].name)}</div>'">` :
+                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(enemyPicks[i].name)}</div>`
+              }
+              <p class="font-semibold text-xs">${enemyPicks[i].name}</p>
+              <p class="text-xs text-slate-400">${enemyPicks[i].role}</p>
+              <button onclick="removeHero('enemy', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
+            `;
+          })() : `
+            <div class="text-slate-500 py-6 text-xs">Empty</div>
+          `}
+        </div>
+      `).join('');
+    }
+
+    function renderDraftPool() {
+      const searchTerm = document.getElementById('search-draft')?.value.toLowerCase() || '';
+      const pool = document.getElementById('draft-pool');
+      
+      const pickedNames = [...allyPicks, ...enemyPicks].filter(Boolean).map(h => h.name);
+      
+      let filtered = allHeroes.filter(hero => {
+        const matchesSearch = hero.name.toLowerCase().includes(searchTerm);
+        const matchesRole = currentDraftRole === 'All' || hero.role === currentDraftRole;
+        const notPicked = !pickedNames.includes(hero.name);
+        return matchesSearch && matchesRole && notPicked;
+      });
+
+      filtered.sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)));
+
+      pool.innerHTML = filtered.map(hero => {
+        const imageUrl = getHeroImage(hero.name);
+        return `
+          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
+            ${imageUrl ?
+              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
+              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
+            }
+            <p class="text-xs font-semibold truncate" title="${hero.name}">${hero.name}</p>
+            <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectHeroForDraft(heroName) {
+      const hero = allHeroes.find(h => h.name === heroName);
+      if (!hero) return;
+      
+      if (confirm(`Add ${hero.name} to:\nOK = Your Team\nCancel = Enemy Team`)) {
+        addToTeam('ally', hero);
+      } else {
+        addToTeam('enemy', hero);
+      }
+    }
+
+    function addToTeam(team, hero) {
+      const picks = team === 'ally' ? allyPicks : enemyPicks;
+      const emptySlot = picks.findIndex(p => !p);
+      
+      if (emptySlot === -1) {
+        alert('Team is full!');
+        return;
+      }
+      
+      if (team === 'ally') {
+        allyPicks[emptySlot] = hero;
+      } else {
+        enemyPicks[emptySlot] = hero;
+      }
+      
+      renderDraftSlots();
+      renderDraftPool();
+      updateRecommendations();
+      updateBuildRecommendation();
+      updateMatchupPredictor();
+    }
+
+    function removeHero(team, index) {
+      if (team === 'ally') {
+        allyPicks[index] = null;
+      } else {
+        enemyPicks[index] = null;
+      }
+      
+      renderDraftSlots();
+      renderDraftPool();
+      updateRecommendations();
+      updateBuildRecommendation();
+      updateMatchupPredictor();
+    }
+
+    function clearTeam(team) {
+      if (team === 'ally') {
+        allyPicks = [];
+      } else {
+        enemyPicks = [];
+      }
+      
+      renderDraftSlots();
+      renderDraftPool();
+      updateRecommendations();
+      updateBuildRecommendation();
+      updateMatchupPredictor();
+    }
+
+    // ==================== RECOMMENDATIONS ====================
+    
+    function updateRecommendations() {
+      const container = document.getElementById('recommendations');
+      
+      if (allyPicks.filter(Boolean).length === 0 && enemyPicks.filter(Boolean).length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-xs">Pick heroes to see recommendations...</p>';
+        return;
+      }
+      
+      const allyRoles = allyPicks.filter(Boolean).map(h => h.role);
+      const pickedNames = [...allyPicks, ...enemyPicks].filter(Boolean).map(h => h.name);
+      
+      const allRoles = ['Tank', 'Fighter', 'Mage', 'Marksman', 'Support'];
+      const neededRoles = allRoles.filter(role => !allyRoles.includes(role));
+      
+      let recommendations = allHeroes
+        .filter(h => !pickedNames.includes(h.name))
+        .filter(h => neededRoles.length === 0 || neededRoles.includes(h.role))
+        .sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)))
+        .slice(0, 6);
+      
+      if (recommendations.length === 0) {
+        container.innerHTML = '<p class="text-emerald-400 text-xs font-semibold">✓ Complete!</p>';
+        return;
+      }
+      
+      container.innerHTML = recommendations.map(hero => {
+        const reason = neededRoles.includes(hero.role) ? `Missing ${hero.role}` : 'High WR';
+        const imageUrl = getHeroImage(hero.name);
+        return `
+          <div class="recommendation-card rounded-lg p-2 cursor-pointer" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
+            <div class="flex items-center gap-2">
+              ${imageUrl ?
+                `<img src="${imageUrl}" alt="${hero.name}" class="w-10 h-10 rounded object-cover" onerror="this.outerHTML='<div class=\\'w-10 h-10 rounded img-placeholder text-sm\\'>${getHeroInitial(hero.name)}</div>'">` :
+                `<div class="w-10 h-10 rounded img-placeholder text-sm">${getHeroInitial(hero.name)}</div>`
+              }
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-xs truncate">${hero.name}</h4>
+                <p class="text-xs text-slate-400">${reason}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-emerald-400 font-bold text-xs">${getWinRate(hero)}%</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== ADAPTIVE BUILD ====================
+    
+    function updateBuildRecommendation() {
+      const buildSection = document.getElementById('build-section');
+      const buildContent = document.getElementById('build-content');
+      
+      const lastAllyPick = allyPicks.filter(Boolean).pop();
+      if (!lastAllyPick) {
+        buildSection.classList.add('hidden');
+        return;
+      }
+      
+      buildSection.classList.remove('hidden');
+      
+      const enemyTanks = enemyPicks.filter(Boolean).filter(h => h.role === 'Tank').length;
+      const enemyFighters = enemyPicks.filter(Boolean).filter(h => h.role === 'Fighter').length;
+      const totalTanky = enemyTanks + enemyFighters;
+      
+      const hero = lastAllyPick;
+      let buildItems = [];
+      let buildReason = '';
+      
+      if (hero.role === 'Marksman') {
+        if (totalTanky >= 3) {
+          buildItems = ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Corrosion Scythe', 'Wind of Nature'];
+          buildReason = `🎯 ANTI-TANK: ${totalTanky} tanky enemies. % HP damage build.`;
+        } else {
+          buildItems = ['Swift Boots', 'Scarlet Phantom', 'Berserkers Fury', 'Windtalker', 'Malefic Roar', 'Wind of Nature'];
+          buildReason = `⚡ CRIT BUILD: Squishy enemies. Max burst damage.`;
+        }
+      } else if (hero.role === 'Mage') {
+        if (totalTanky >= 3) {
+          buildItems = ['Tough Boots', 'Clock of Destiny', 'Divine Glaive', 'Holy Crystal', 'Lightning Truncheon', 'Winter Truncheon'];
+          buildReason = `🎯 PENETRATION: ${totalTanky} tanky enemies. Magic PEN focus.`;
+        } else {
+          buildItems = ['Tough Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Winter Truncheon'];
+          buildReason = `⚡ BURST BUILD: Standard high damage.`;
+        }
+      } else if (hero.role === 'Tank') {
+        buildItems = ['Warrior Boots', 'Cursed Helmet', 'Antique Cuirass', 'Athenas Shield', 'Dominance Ice', 'Immortality'];
+        buildReason = `🛡️ BALANCED TANK: Armor + Magic Resist.`;
+      } else {
+        buildItems = ['Warrior Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Athenas Shield', 'Immortality'];
+        buildReason = `⚔️ BALANCED: Damage + Survivability.`;
+      }
+      
+      const imageUrl = getHeroImage(hero.name);
+      buildContent.innerHTML = `
+        <div class="mb-3">
+          <div class="flex items-center gap-3 mb-2">
+            ${imageUrl ?
+              `<img src="${imageUrl}" alt="${hero.name}" class="w-12 h-12 rounded-lg" onerror="this.outerHTML='<div class=\\'w-12 h-12 rounded-lg img-placeholder text-xl\\'>${getHeroInitial(hero.name)}</div>'">` :
+              `<div class="w-12 h-12 rounded-lg img-placeholder text-xl">${getHeroInitial(hero.name)}</div>`
+            }
+            <div>
+              <h3 class="text-lg font-bold">${hero.name}</h3>
+              <p class="text-purple-300 text-xs font-semibold">${buildReason}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+          ${buildItems.map(itemName => {
+            const item = ITEMS[itemName];
+            if (!item) return '';
+            return `
+              <div class="build-card rounded-lg p-2">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="item-icon text-sm">${item.icon}</div>
+                  <p class="font-bold text-xs flex-1">${itemName}</p>
+                </div>
+                <p class="text-xs text-slate-400">${item.stats}</p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // ==================== MATCHUP PREDICTOR ====================
+    
+    function updateMatchupPredictor() {
+      const resultDiv = document.getElementById('matchup-result');
+      const emptyDiv = document.getElementById('matchup-empty');
+      const analysisDiv = document.getElementById('matchup-analysis');
+      
+      const allyCount = allyPicks.filter(Boolean).length;
+      const enemyCount = enemyPicks.filter(Boolean).length;
+      
+      if (allyCount === 0 && enemyCount === 0) {
+        resultDiv.classList.add('hidden');
+        emptyDiv.classList.remove('hidden');
+        return;
+      }
+      
+      resultDiv.classList.remove('hidden');
+      emptyDiv.classList.add('hidden');
+      
+      const allyAvgWR = allyCount > 0 
+        ? allyPicks.filter(Boolean).reduce((sum, h) => sum + parseFloat(getWinRate(h)), 0) / allyCount
+        : 50;
+      
+      const enemyAvgWR = enemyCount > 0
+        ? enemyPicks.filter(Boolean).reduce((sum, h) => sum + parseFloat(getWinRate(h)), 0) / enemyCount
+        : 50;
+      
+      const allyRoles = allyPicks.filter(Boolean).map(h => h.role);
+      const enemyRoles = enemyPicks.filter(Boolean).map(h => h.role);
+      
+      const allyTanks = allyRoles.filter(r => r === 'Tank').length;
+      const enemyTanks = enemyRoles.filter(r => r === 'Tank').length;
+      const allyDPS = allyRoles.filter(r => r === 'Marksman' || r === 'Mage').length;
+      const enemyDPS = enemyRoles.filter(r => r === 'Marksman' || r === 'Mage').length;
+      
+      let yourWinRate = 50;
+      yourWinRate += (allyAvgWR - enemyAvgWR) * 2;
+      yourWinRate += (allyTanks - enemyTanks) * 3;
+      yourWinRate += (allyDPS - enemyDPS) * 2;
+      yourWinRate = Math.max(20, Math.min(80, yourWinRate));
+      
+      const enemyWinRate = 100 - yourWinRate;
+      
+      document.getElementById('your-winrate').textContent = `${yourWinRate.toFixed(0)}%`;
+      document.getElementById('enemy-winrate').textContent = `${enemyWinRate.toFixed(0)}%`;
+      
+      const indicator = document.getElementById('winrate-indicator');
+      indicator.style.left = `${yourWinRate}%`;
+      
+      let analysis = [];
+      
+      if (yourWinRate >= 60) {
+        analysis.push('<div class="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 text-emerald-300 text-xs"><strong>🎯 Advantage:</strong> Your team is favored!</div>');
+      } else if (yourWinRate <= 40) {
+        analysis.push('<div class="bg-red-500/20 border border-red-500/50 rounded-lg p-2 text-red-300 text-xs"><strong>⚠️ Disadvantage:</strong> Play safe, look for picks.</div>');
+      } else {
+        analysis.push('<div class="bg-blue-500/20 border border-blue-500/50 rounded-lg p-2 text-blue-300 text-xs"><strong>⚖️ Even:</strong> Execution matters.</div>');
+      }
+      
+      if (allyTanks === 0 && enemyTanks > 0) {
+        analysis.push('<div class="bg-amber-500/20 border border-amber-500/50 rounded-lg p-2 text-amber-300 text-xs"><strong>🛡️ No Tank:</strong> Stay grouped and kite.</div>');
+      }
+      
+      if (allyDPS < enemyDPS) {
+        analysis.push('<div class="bg-purple-500/20 border border-purple-500/50 rounded-lg p-2 text-purple-300 text-xs"><strong>💥 Less Damage:</strong> Focus picks and objectives.</div>');
+      }
+      
+      analysisDiv.innerHTML = analysis.join('');
+    }
+
+    // ==================== COUNTERS ====================
+    
+    function searchCounterHero() {
+      const searchTerm = document.getElementById('search-counter').value.toLowerCase();
+      const results = document.getElementById('counter-results');
+      
+      if (searchTerm.length < 2) {
+        results.innerHTML = '';
+        document.getElementById('counter-analysis').classList.add('hidden');
+        return;
+      }
+      
+      const filtered = allHeroes.filter(h => h.name.toLowerCase().includes(searchTerm)).slice(0, 12);
+      
+      results.innerHTML = filtered.map(hero => {
+        const imageUrl = getHeroImage(hero.name);
+        return `
+          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="analyzeHero('${hero.name.replace(/'/g, "\\'")}')">
+            ${imageUrl ?
+              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
+              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
+            }
+            <p class="text-xs font-semibold truncate">${hero.name}</p>
+            <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function analyzeHero(heroName) {
+      const hero = allHeroes.find(h => h.name === heroName);
+      if (!hero) return;
+      
+      const counters = allHeroes
+        .filter(h => h.name !== hero.name && h.role !== hero.role)
+        .sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)))
+        .slice(0, 6);
+      
+      const synergies = allHeroes
+        .filter(h => h.name !== hero.name && h.role !== hero.role)
+        .sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)))
+        .slice(0, 6);
+      
+      const imageUrl = getHeroImage(hero.name);
+      const analysisDiv = document.getElementById('counter-analysis');
+      analysisDiv.classList.remove('hidden');
+      analysisDiv.innerHTML = `
+        <div class="mb-6">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            ${imageUrl ?
+              `<img src="${imageUrl}" alt="${hero.name}" class="w-20 h-20 rounded-lg" onerror="this.outerHTML='<div class=\\'w-20 h-20 rounded-lg img-placeholder text-3xl\\'>${getHeroInitial(hero.name)}</div>'">` :
+              `<div class="w-20 h-20 rounded-lg img-placeholder text-3xl">${getHeroInitial(hero.name)}</div>`
+            }
+            <div class="text-left">
+              <h3 class="text-xl font-bold">${hero.name}</h3>
+              <p class="text-slate-400 text-sm">${hero.role}</p>
+              <div class="flex gap-2 mt-1 text-xs">
+                <span class="text-emerald-400 font-semibold">WR: ${getWinRate(hero)}%</span>
+                <span class="text-amber-400 font-semibold">P: ${getPickRate(hero)}%</span>
+                <span class="text-red-400 font-semibold">B: ${getBanRate(hero)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 class="text-lg font-bold mb-3 text-red-400">⚔️ Counters</h4>
+            <div class="grid grid-cols-3 gap-2">
+              ${counters.map(h => {
+                const cImageUrl = getHeroImage(h.name);
+                return `
+                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    ${cImageUrl ?
+                      `<img src="${cImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
+                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
+                    }
+                    <p class="text-xs font-semibold truncate">${h.name}</p>
+                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-3 text-blue-400">🤝 Synergies</h4>
+            <div class="grid grid-cols-3 gap-2">
+              ${synergies.map(h => {
+                const sImageUrl = getHeroImage(h.name);
+                return `
+                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    ${sImageUrl ?
+                      `<img src="${sImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
+                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
+                    }
+                    <p class="text-xs font-semibold truncate">${h.name}</p>
+                    <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function showHeroDetails(heroName) {
       const hero = allHeroes.find(h => h.name === heroName);
       if (!hero) return;
@@ -610,17 +1373,27 @@ Role: ${hero.role}
 Tier: ${tier}
 
 Win Rate: ${getWinRate(hero)}%
+Pick Rate: ${getPickRate(hero)}%
+Ban Rate: ${getBanRate(hero)}%
       `);
     }
 
+    // ==================== TAB SYSTEM ====================
+    
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       
       document.getElementById('content-' + tabName).classList.remove('hidden');
       document.getElementById('tab-' + tabName).classList.add('active');
+      
+      if (tabName === 'matchup') {
+        updateMatchupPredictor();
+      }
     }
 
+    // ==================== START ====================
+    
     window.addEventListener('DOMContentLoaded', init);
   </script>
 
