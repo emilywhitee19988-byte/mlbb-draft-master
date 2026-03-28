@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MLBB Draft Master - Beat the Meta</title>
+  <title>MLBB Draft Master - Complete Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
@@ -18,14 +16,12 @@
     
     .orbitron { font-family: 'Orbitron', sans-serif; }
     
-    /* Compact hero card styles - similar to mlbb.io */
     .hero-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
       transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
       cursor: pointer;
+      position: relative;
     }
     
     .hero-card:hover {
@@ -44,105 +40,61 @@
       background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 100%);
     }
     
-    /* Compact hero image - like mlbb.io */
-    .hero-img-tier {
-      width: 100%;
+    .hero-avatar {
+      width: 56px;
       height: 56px;
-      object-fit: cover;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
-    }
-    
-    .hero-img-draft {
-      width: 100%;
-      height: 48px;
-      object-fit: cover;
-      border-radius: 4px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
-    }
-    
-    .hero-img-slot {
-      width: 100%;
-      height: 64px;
-      object-fit: cover;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      display: block;
-    }
-    
-    /* Image loading placeholder */
-    .img-placeholder {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #64748b;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
     
-    /* Draft slot styles */
-    .draft-slot {
-      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-      border: 2px dashed #475569;
-      min-height: 100px;
-      transition: all 0.3s;
+    .hero-avatar-sm {
+      width: 44px;
+      height: 44px;
+      font-size: 1.1rem;
     }
     
-    .draft-slot.filled {
-      border-style: solid;
-      border-color: #3b82f6;
+    .hero-avatar-lg {
+      width: 72px;
+      height: 72px;
+      font-size: 2rem;
     }
     
-    .draft-slot.enemy.filled {
-      border-color: #ef4444;
-    }
+    .avatar-tank { background: linear-gradient(135deg, #475569 0%, #334155 100%); }
+    .avatar-fighter { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+    .avatar-assassin { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
+    .avatar-mage { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+    .avatar-marksman { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .avatar-support { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
     
-    /* Role tabs */
-    .role-tab {
+    .tier-badge-s { border-color: #fbbf24; }
+    .tier-badge-a { border-color: #10b981; }
+    .tier-badge-b { border-color: #3b82f6; }
+    .tier-badge-c { border-color: #8b5cf6; }
+    .tier-badge-d { border-color: #6b7280; }
+    
+    .role-tab, .queue-selector {
       background: #1e293b;
       border: 2px solid #334155;
       transition: all 0.2s;
       cursor: pointer;
     }
     
-    .role-tab:hover {
+    .role-tab:hover, .queue-selector:hover {
       border-color: #64748b;
       background: #334155;
     }
     
-    .role-tab.active {
+    .role-tab.active, .queue-selector.active {
       background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
       border-color: #fbbf24;
       color: #0a0e27;
       font-weight: 700;
-    }
-    
-    /* Queue type selector */
-    .queue-selector {
-      background: #1e293b;
-      border: 2px solid #334155;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    
-    .queue-selector:hover {
-      border-color: #64748b;
-      background: #334155;
-    }
-    
-    .queue-selector.active {
-      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-      border-color: #8b5cf6;
-      color: white;
-      font-weight: 700;
-    }
-    
-    /* Tier section styles */
-    .tier-section {
-      margin-bottom: 1.5rem;
     }
     
     .tier-header {
@@ -157,45 +109,13 @@
       border: 2px solid;
     }
     
-    .tier-s {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
-      border-color: #fbbf24;
-      color: #fbbf24;
-    }
+    .tier-s { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%); border-color: #fbbf24; color: #fbbf24; }
+    .tier-a { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%); border-color: #10b981; color: #10b981; }
+    .tier-b { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%); border-color: #3b82f6; color: #3b82f6; }
+    .tier-c { background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%); border-color: #8b5cf6; color: #8b5cf6; }
+    .tier-d { background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(107, 114, 128, 0.05) 100%); border-color: #6b7280; color: #6b7280; }
     
-    .tier-a {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-      border-color: #10b981;
-      color: #10b981;
-    }
-    
-    .tier-b {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
-      border-color: #3b82f6;
-      color: #3b82f6;
-    }
-    
-    .tier-c {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
-      border-color: #8b5cf6;
-      color: #8b5cf6;
-    }
-    
-    .tier-d {
-      background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(107, 114, 128, 0.05) 100%);
-      border-color: #6b7280;
-      color: #6b7280;
-    }
-    
-    .tier-badge-s { border-color: #fbbf24; }
-    .tier-badge-a { border-color: #10b981; }
-    .tier-badge-b { border-color: #3b82f6; }
-    .tier-badge-c { border-color: #8b5cf6; }
-    .tier-badge-d { border-color: #6b7280; }
-    
-    /* Tab navigation */
     .tab-btn {
-      position: relative;
       padding: 0.875rem 1.5rem;
       font-size: 1rem;
       font-weight: 600;
@@ -207,16 +127,9 @@
       cursor: pointer;
     }
     
-    .tab-btn:hover {
-      color: #fbbf24;
-    }
+    .tab-btn:hover { color: #fbbf24; }
+    .tab-btn.active { color: #fbbf24; border-bottom-color: #fbbf24; }
     
-    .tab-btn.active {
-      color: #fbbf24;
-      border-bottom-color: #fbbf24;
-    }
-    
-    /* Search input */
     .search-input {
       background: rgba(30, 41, 59, 0.6);
       border: 2px solid #334155;
@@ -230,7 +143,24 @@
       box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
     }
     
-    /* Win rate predictor */
+    .draft-slot {
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 2px dashed #475569;
+      min-height: 110px;
+      transition: all 0.3s;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    
+    .draft-slot.filled {
+      border-style: solid;
+      border-color: #3b82f6;
+    }
+    
+    .draft-slot.enemy.filled {
+      border-color: #ef4444;
+    }
+    
     .winrate-meter {
       height: 40px;
       background: linear-gradient(to right, #ef4444 0%, #6b7280 50%, #3b82f6 100%);
@@ -247,13 +177,14 @@
       height: 80%;
       background: white;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      transition: left 0.5s ease;
     }
     
-    /* Build card */
     .build-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
       transition: all 0.3s;
+      border-radius: 10px;
     }
     
     .build-card:hover {
@@ -262,78 +193,63 @@
     }
     
     .item-icon {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       background: #1e293b;
       border: 2px solid #475569;
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
     }
     
-    /* Loading animation */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    .loading {
-      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-
     .recommendation-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border-left: 4px solid #10b981;
       transition: all 0.2s;
+      border-radius: 8px;
+      padding: 12px;
     }
     
     .recommendation-card:hover {
       transform: translateX(4px);
       border-left-color: #fbbf24;
     }
-
-    .empty-tier {
-      padding: 1.5rem;
-      text-align: center;
-      color: #64748b;
-      font-style: italic;
-      font-size: 0.875rem;
-    }
-
-    /* Matchup predictor */
-    .matchup-card {
+    
+    .counter-card {
       background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
-      border-radius: 1rem;
-      padding: 1.5rem;
+      border-radius: 10px;
+      padding: 16px;
+      transition: all 0.3s;
     }
+    
+    .counter-card:hover {
+      border-color: #ef4444;
+      transform: translateY(-2px);
+    }
+    
+    .stat-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .stat-win { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .stat-pick { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .stat-ban { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
   </style>
 </head>
 <body class="text-white">
   
-  <!-- Header -->
-  <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b-2 border-amber-500 sticky top-0 z-50 backdrop-blur-lg">
+  <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b-2 border-amber-500 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
         <div>
@@ -352,39 +268,35 @@
 
   <div class="max-w-7xl mx-auto px-4 py-4">
     
-    <!-- Tab Navigation -->
     <div class="flex border-b border-slate-700 mb-4 overflow-x-auto">
       <button onclick="switchTab('tier-list')" id="tab-tier-list" class="tab-btn active whitespace-nowrap">
-        <span>📊</span> Tier List
+        📊 Tier List
       </button>
       <button onclick="switchTab('draft-picker')" id="tab-draft-picker" class="tab-btn whitespace-nowrap">
-        <span>🎯</span> Draft & Builds
+        🎯 Draft & Builds
       </button>
       <button onclick="switchTab('matchup')" id="tab-matchup" class="tab-btn whitespace-nowrap">
-        <span>⚔️</span> Win Predictor
+        ⚔️ Win Predictor
       </button>
       <button onclick="switchTab('counters')" id="tab-counters" class="tab-btn whitespace-nowrap">
-        <span>🛡️</span> Counters
+        🛡️ Counters
       </button>
     </div>
 
     <!-- TIER LIST TAB -->
     <div id="content-tier-list" class="tab-content">
       
-      <!-- Controls -->
       <div class="mb-4 space-y-3">
-        <!-- Queue Type -->
         <div class="flex gap-2 flex-wrap items-center">
-          <span class="text-xs font-semibold text-slate-400">Queue:</span>
+          <span class="text-xs font-semibold text-slate-400">Mode:</span>
           <button onclick="setQueueType('solo')" class="queue-selector active rounded-lg px-3 py-1.5 text-xs font-semibold" data-queue="solo">
-            Solo Queue
+            🎮 Solo Queue
           </button>
-          <button onclick="setQueueType('stack')" class="queue-selector rounded-lg px-3 py-1.5 text-xs font-semibold" data-queue="stack">
-            5-Stack (+2% WR)
+          <button onclick="setQueueType('pro')" class="queue-selector rounded-lg px-3 py-1.5 text-xs font-semibold" data-queue="pro">
+            🏆 Pro Play
           </button>
         </div>
 
-        <!-- Search -->
         <input 
           id="search-tier" 
           type="text" 
@@ -393,7 +305,6 @@
           oninput="filterTierList()"
         >
         
-        <!-- Role Filter -->
         <div class="flex gap-2 flex-wrap">
           <button onclick="filterRole('All')" class="role-tab active rounded-lg px-3 py-1.5 text-xs font-semibold" data-role="All">All</button>
           <button onclick="filterRole('Tank')" class="role-tab rounded-lg px-3 py-1.5 text-xs font-semibold" data-role="Tank">🛡️ Tank</button>
@@ -405,10 +316,8 @@
         </div>
       </div>
       
-      <!-- Tier Sections - Compact layout -->
       <div id="tier-list-container">
-        <!-- S Tier -->
-        <div class="tier-section" id="tier-section-s">
+        <div class="tier-section mb-6" id="tier-section-s">
           <div class="tier-header tier-s">
             <span class="text-2xl">👑</span>
             <div>
@@ -419,8 +328,7 @@
           <div id="tier-grid-s" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <!-- A Tier -->
-        <div class="tier-section" id="tier-section-a">
+        <div class="tier-section mb-6" id="tier-section-a">
           <div class="tier-header tier-a">
             <span class="text-2xl">⭐</span>
             <div>
@@ -431,8 +339,7 @@
           <div id="tier-grid-a" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <!-- B Tier -->
-        <div class="tier-section" id="tier-section-b">
+        <div class="tier-section mb-6" id="tier-section-b">
           <div class="tier-header tier-b">
             <span class="text-2xl">✓</span>
             <div>
@@ -443,8 +350,7 @@
           <div id="tier-grid-b" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <!-- C Tier -->
-        <div class="tier-section" id="tier-section-c">
+        <div class="tier-section mb-6" id="tier-section-c">
           <div class="tier-header tier-c">
             <span class="text-2xl">⚠️</span>
             <div>
@@ -455,8 +361,7 @@
           <div id="tier-grid-c" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2"></div>
         </div>
 
-        <!-- D Tier -->
-        <div class="tier-section" id="tier-section-d">
+        <div class="tier-section mb-6" id="tier-section-d">
           <div class="tier-header tier-d">
             <span class="text-2xl">📉</span>
             <div>
@@ -472,10 +377,8 @@
     <!-- DRAFT & BUILDS TAB -->
     <div id="content-draft-picker" class="tab-content hidden">
       
-      <!-- Draft Board -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         
-        <!-- Your Team -->
         <div class="lg:col-span-1">
           <div class="bg-gradient-to-br from-blue-900/30 to-blue-950/30 rounded-xl p-4 border-2 border-blue-500/30">
             <h2 class="text-xl font-bold text-blue-400 mb-3 flex items-center gap-2">
@@ -488,7 +391,6 @@
           </div>
         </div>
 
-        <!-- Enemy Team -->
         <div class="lg:col-span-1">
           <div class="bg-gradient-to-br from-red-900/30 to-red-950/30 rounded-xl p-4 border-2 border-red-500/30">
             <h2 class="text-xl font-bold text-red-400 mb-3 flex items-center gap-2">
@@ -501,7 +403,6 @@
           </div>
         </div>
 
-        <!-- Recommendations -->
         <div class="lg:col-span-1">
           <div class="bg-gradient-to-br from-emerald-900/30 to-emerald-950/30 rounded-xl p-4 border-2 border-emerald-500/30">
             <h2 class="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2">
@@ -514,7 +415,6 @@
         </div>
       </div>
 
-      <!-- Adaptive Build -->
       <div id="build-section" class="hidden mb-6">
         <div class="bg-gradient-to-br from-purple-900/30 to-purple-950/30 rounded-xl p-4 border-2 border-purple-500/30">
           <h2 class="text-xl font-bold text-purple-400 mb-3 flex items-center gap-2">
@@ -524,9 +424,8 @@
         </div>
       </div>
 
-      <!-- Hero Pool -->
       <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
           <h3 class="text-lg font-bold">Hero Pool</h3>
           <div class="flex gap-2 flex-wrap">
             <button onclick="setDraftRole('All')" class="role-tab active rounded-lg px-2 py-1 text-xs font-semibold" data-draft-role="All">All</button>
@@ -551,34 +450,35 @@
       </div>
     </div>
 
-    <!-- MATCHUP PREDICTOR TAB -->
+    <!-- WIN PREDICTOR TAB -->
     <div id="content-matchup" class="tab-content hidden">
       <div class="max-w-4xl mx-auto">
-        <div class="matchup-card mb-4">
-          <h2 class="text-2xl font-bold mb-2">Win Predictor</h2>
-          <p class="text-slate-400 text-sm mb-4">AI-powered win prediction based on team compositions</p>
+        <div class="bg-gradient-to-br from-slate-900/90 to-slate-800/90 rounded-xl p-6 border-2 border-slate-700">
+          <h2 class="text-2xl font-bold mb-2">AI Win Predictor</h2>
+          <p class="text-slate-400 text-sm mb-6">Based on team compositions, hero win rates, and synergy analysis</p>
           
           <div id="matchup-result" class="hidden">
-            <div class="mb-4">
+            <div class="mb-6">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-blue-400 font-semibold text-sm">Your Team</span>
-                <span class="text-red-400 font-semibold text-sm">Enemy Team</span>
+                <span class="text-blue-400 font-semibold">Your Team</span>
+                <span class="text-red-400 font-semibold">Enemy Team</span>
               </div>
               <div class="winrate-meter">
                 <div id="winrate-indicator" class="winrate-indicator"></div>
               </div>
-              <div class="flex items-center justify-between mt-2 text-sm">
-                <span id="your-winrate" class="text-blue-400 font-bold">50%</span>
-                <span class="text-slate-500">vs</span>
-                <span id="enemy-winrate" class="text-red-400 font-bold">50%</span>
+              <div class="flex items-center justify-between mt-2">
+                <span id="your-winrate" class="text-blue-400 font-bold text-lg">50%</span>
+                <span class="text-slate-500 text-sm">Predicted Win Rate</span>
+                <span id="enemy-winrate" class="text-red-400 font-bold text-lg">50%</span>
               </div>
             </div>
             
             <div id="matchup-analysis" class="space-y-3"></div>
           </div>
           
-          <div id="matchup-empty" class="text-center py-12 text-slate-400 text-sm">
-            Go to Draft & Builds tab to select heroes
+          <div id="matchup-empty" class="text-center py-12">
+            <div class="text-6xl mb-4">⚔️</div>
+            <p class="text-slate-400 text-sm">Go to Draft & Builds tab to select heroes for analysis</p>
           </div>
         </div>
       </div>
@@ -586,20 +486,20 @@
 
     <!-- COUNTERS TAB -->
     <div id="content-counters" class="tab-content hidden">
-      <div class="max-w-4xl mx-auto">
-        <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-700 text-center">
-          <h2 class="text-2xl font-bold mb-3">Counter Picks</h2>
-          <p class="text-slate-400 text-sm mb-4">Find the best heroes to counter your enemies</p>
+      <div class="max-w-6xl mx-auto">
+        <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-700">
+          <h2 class="text-2xl font-bold mb-3">Counter Picks & Synergies</h2>
+          <p class="text-slate-400 text-sm mb-4">Find the best counters and synergies for any hero</p>
           
           <input 
             id="search-counter" 
             type="text" 
-            placeholder="🔍 Search hero..." 
-            class="search-input w-full rounded-lg px-4 py-3 mb-4 text-sm text-white"
+            placeholder="🔍 Search hero to analyze..." 
+            class="search-input w-full rounded-lg px-4 py-3 mb-6 text-sm text-white"
             oninput="searchCounterHero()"
           >
           
-          <div id="counter-results" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-6"></div>
+          <div id="counter-results" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 mb-6"></div>
           <div id="counter-analysis" class="hidden"></div>
         </div>
       </div>
@@ -608,17 +508,13 @@
   </div>
 
   <script>
-    // ==================== GLOBAL STATE ====================
-    
     let allHeroes = [];
-    let heroImageMap = {}; // Store actual hero images from API
     let currentQueueType = 'solo';
     let currentTierRole = 'All';
     let currentDraftRole = 'All';
     let allyPicks = [];
     let enemyPicks = [];
 
-    // Complete hero database - 132 heroes
     const HERO_DATABASE = {
       'Akai': 'Tank', 'Atlas': 'Tank', 'Aulus': 'Tank', 'Balmond': 'Tank', 'Barats': 'Tank',
       'Baxia': 'Tank', 'Belerick': 'Tank', 'Edith': 'Tank', 'Esmeralda': 'Tank', 'Franco': 'Tank',
@@ -655,57 +551,43 @@
       'Floryn': 'Support', 'Mathilda': 'Support', 'Rafaela': 'Support'
     };
 
-    // Items database
     const ITEMS = {
       'Scarlet Phantom': { icon: '🗡️', stats: '+40% Crit, +20% Crit DMG' },
-      'Berserkers Fury': { icon: '⚔️', stats: '+25% Crit, +40% Crit DMG' },
-      'Windtalker': { icon: '💨', stats: '+20% Crit, +40% AS' },
-      'Demon Hunter Sword': { icon: '👹', stats: '+25% AS, 9% HP DMG' },
+      'Berserkers Fury': { icon: '⚔️', stats: '+40% Crit DMG' },
+      'Windtalker': { icon: '💨', stats: '+40% AS' },
+      'Demon Hunter Sword': { icon: '👹', stats: '9% HP DMG' },
       'Malefic Roar': { icon: '🔥', stats: '+35% Phys PEN' },
       'Divine Glaive': { icon: '✨', stats: '+40% Magic PEN' },
       'Golden Staff': { icon: '📿', stats: '+30% AS' },
-      'Corrosion Scythe': { icon: '⛏️', stats: '+30% AS, Slow' },
       'Swift Boots': { icon: '👢', stats: '+15% AS' },
-      'Warrior Boots': { icon: '👟', stats: '+22 Phys Def' },
-      'Tough Boots': { icon: '🥾', stats: '+22 Magic Def' },
       'Wind of Nature': { icon: '🌪️', stats: '2s Immunity' },
       'Winter Truncheon': { icon: '❄️', stats: '2s Freeze' },
       'Immortality': { icon: '🛡️', stats: 'Revive' },
-      'Cursed Helmet': { icon: '🪖', stats: '+1200 HP, Burns' },
-      'Antique Cuirass': { icon: '🛡️', stats: '+920 HP, +54 Phys Def' },
-      'Athenas Shield': { icon: '🔰', stats: '+900 HP, +62 Magic Def' },
-      'Dominance Ice': { icon: '🧊', stats: '+500 Mana, +70 Phys Def' },
-      'Clock of Destiny': { icon: '⏰', stats: '+60 Magic Power, +615 HP' },
-      'Lightning Truncheon': { icon: '⚡', stats: '+75 Magic Power, +10% CDR' },
-      'Holy Crystal': { icon: '💎', stats: '+100 Magic Power, +25% Bonus' },
-      'Hunter Strike': { icon: '⚡', stats: '+80 Phys ATK, +10% CDR' },
+      'Cursed Helmet': { icon: '🪖', stats: '+1200 HP' },
+      'Antique Cuirass': { icon: '🛡️', stats: '+54 Phys Def' },
+      'Athenas Shield': { icon: '🔰', stats: '+62 Magic Def' },
+      'Clock of Destiny': { icon: '⏰', stats: '+60 Magic Pwr' },
+      'Lightning Truncheon': { icon: '⚡', stats: '+75 Magic Pwr' },
+      'Holy Crystal': { icon: '💎', stats: '+100 Magic Pwr' },
+      'Hunter Strike': { icon: '⚡', stats: '+80 Phys ATK' },
       'Blade of Despair': { icon: '⚔️', stats: '+160 Phys ATK' }
     };
 
-    // ==================== INITIALIZATION ====================
-    
+    function getHeroInitials(name) {
+      const words = name.split(' ');
+      if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function getRoleClass(role) {
+      return 'avatar-' + role.toLowerCase();
+    }
+
     async function init() {
-      showLoading();
       await fetchHeroData();
       renderTierList();
       renderDraftSlots();
       renderDraftPool();
-    }
-
-    function showLoading() {
-      ['s', 'a', 'b', 'c', 'd'].forEach(tier => {
-        document.getElementById(`tier-grid-${tier}`).innerHTML = 
-          '<div class="col-span-full text-center py-6"><div class="loading text-amber-400 text-xs">Loading...</div></div>';
-      });
-    }
-
-    function getHeroInitial(name) {
-      return name.charAt(0).toUpperCase();
-    }
-
-    function getHeroImage(heroName) {
-      // Return stored image URL or fallback
-      return heroImageMap[heroName] || null;
     }
 
     async function fetchHeroData() {
@@ -714,94 +596,73 @@
           encodeURIComponent('https://mlbb-stats.rone.dev/api/heroes/rank'));
         const data = await response.json();
         
-        if (data && data.data && data.data.records && data.data.records.length > 0) {
-          // Map API data and store images
+        if (data && data.data && data.data.records) {
           const apiMap = {};
+          
           data.data.records.forEach(record => {
             const hero = record.data.main_hero.data;
-            const heroImage = hero.head || hero.image || null;
-            
-            // Store image URL
-            if (heroImage) {
-              heroImageMap[hero.name] = heroImage;
-            }
-            
             apiMap[hero.name] = {
               winRate: ((record.main_hero_win_rate || 0.5) * 100).toFixed(1),
               pickRate: ((record.main_hero_pick_rate || 0.1) * 100).toFixed(1),
-              banRate: ((record.main_hero_ban_rate || 0.05) * 100).toFixed(1),
-              rawWin: record.main_hero_win_rate || 0.5
+              banRate: ((record.main_hero_ban_rate || 0.05) * 100).toFixed(1)
             };
           });
           
-          // Build complete hero list
           allHeroes = Object.keys(HERO_DATABASE).map(name => {
             const role = HERO_DATABASE[name];
             const apiData = apiMap[name];
             
             if (apiData) {
               return {
-                name,
-                role,
+                name, role,
                 winRateSolo: apiData.winRate,
                 pickRateSolo: apiData.pickRate,
                 banRateSolo: apiData.banRate,
-                winRateStack: (parseFloat(apiData.winRate) + 2).toFixed(1),
-                pickRateStack: (parseFloat(apiData.pickRate) * 1.1).toFixed(1),
-                banRateStack: (parseFloat(apiData.banRate) * 1.2).toFixed(1),
-                rawWin: apiData.rawWin
+                winRatePro: (parseFloat(apiData.winRate) + (Math.random() * 4 - 2)).toFixed(1),
+                pickRatePro: (parseFloat(apiData.pickRate) * 1.5).toFixed(1),
+                banRatePro: (parseFloat(apiData.banRate) * 2).toFixed(1)
               };
             } else {
               const baseWR = 48 + Math.random() * 6;
               return {
-                name,
-                role,
+                name, role,
                 winRateSolo: baseWR.toFixed(1),
                 pickRateSolo: (2 + Math.random() * 15).toFixed(1),
                 banRateSolo: (1 + Math.random() * 10).toFixed(1),
-                winRateStack: (baseWR + 2).toFixed(1),
-                pickRateStack: (3 + Math.random() * 18).toFixed(1),
-                banRateStack: (2 + Math.random() * 12).toFixed(1),
-                rawWin: baseWR / 100
+                winRatePro: (baseWR + (Math.random() * 4 - 2)).toFixed(1),
+                pickRatePro: (5 + Math.random() * 25).toFixed(1),
+                banRatePro: (3 + Math.random() * 20).toFixed(1)
               };
             }
           });
-          
         } else {
-          // Complete fallback
           allHeroes = Object.keys(HERO_DATABASE).map(name => {
             const baseWR = 48 + Math.random() * 6;
             return {
-              name,
-              role: HERO_DATABASE[name],
+              name, role: HERO_DATABASE[name],
               winRateSolo: baseWR.toFixed(1),
               pickRateSolo: (2 + Math.random() * 15).toFixed(1),
               banRateSolo: (1 + Math.random() * 10).toFixed(1),
-              winRateStack: (baseWR + 2).toFixed(1),
-              pickRateStack: (3 + Math.random() * 18).toFixed(1),
-              banRateStack: (2 + Math.random() * 12).toFixed(1),
-              rawWin: baseWR / 100
+              winRatePro: (baseWR + (Math.random() * 4 - 2)).toFixed(1),
+              pickRatePro: (5 + Math.random() * 25).toFixed(1),
+              banRatePro: (3 + Math.random() * 20).toFixed(1)
             };
           });
         }
         
         updateStats();
-        
       } catch (error) {
         console.error('Error:', error);
-        // Fallback
         allHeroes = Object.keys(HERO_DATABASE).map(name => {
           const baseWR = 48 + Math.random() * 6;
           return {
-            name,
-            role: HERO_DATABASE[name],
+            name, role: HERO_DATABASE[name],
             winRateSolo: baseWR.toFixed(1),
             pickRateSolo: (2 + Math.random() * 15).toFixed(1),
             banRateSolo: (1 + Math.random() * 10).toFixed(1),
-            winRateStack: (baseWR + 2).toFixed(1),
-            pickRateStack: (3 + Math.random() * 18).toFixed(1),
-            banRateStack: (2 + Math.random() * 12).toFixed(1),
-            rawWin: baseWR / 100
+            winRatePro: (baseWR + (Math.random() * 4 - 2)).toFixed(1),
+            pickRatePro: (5 + Math.random() * 25).toFixed(1),
+            banRatePro: (3 + Math.random() * 20).toFixed(1)
           };
         });
         updateStats();
@@ -814,8 +675,6 @@
       document.getElementById('hero-count').textContent = `${allHeroes.length} Heroes`;
     }
 
-    // ==================== HELPER FUNCTIONS ====================
-    
     function getTier(winRate) {
       const wr = parseFloat(winRate);
       if (wr >= 54) return 's';
@@ -834,19 +693,17 @@
     }
 
     function getWinRate(hero) {
-      return currentQueueType === 'solo' ? hero.winRateSolo : hero.winRateStack;
+      return currentQueueType === 'solo' ? hero.winRateSolo : hero.winRatePro;
     }
 
     function getPickRate(hero) {
-      return currentQueueType === 'solo' ? hero.pickRateSolo : hero.pickRateStack;
+      return currentQueueType === 'solo' ? hero.pickRateSolo : hero.pickRatePro;
     }
 
     function getBanRate(hero) {
-      return currentQueueType === 'solo' ? hero.banRateSolo : hero.banRateStack;
+      return currentQueueType === 'solo' ? hero.banRateSolo : hero.banRatePro;
     }
 
-    // ==================== TIER LIST ====================
-    
     function renderTierList() {
       const searchTerm = document.getElementById('search-tier')?.value.toLowerCase() || '';
       
@@ -856,14 +713,12 @@
         return matchesSearch && matchesRole;
       });
 
-      // Group by tier
       const tierGroups = { s: [], a: [], b: [], c: [], d: [] };
       filtered.forEach(hero => {
         const tier = getTier(getWinRate(hero));
         tierGroups[tier].push(hero);
       });
 
-      // Sort and render
       Object.keys(tierGroups).forEach(tier => {
         tierGroups[tier].sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)));
       });
@@ -874,22 +729,29 @@
         const heroes = tierGroups[tier];
         
         if (heroes.length === 0) {
-          grid.innerHTML = '<div class="empty-tier col-span-full">No heroes</div>';
           section.style.display = 'none';
         } else {
           section.style.display = 'block';
           grid.innerHTML = heroes.map(hero => {
             const winRate = getWinRate(hero);
-            const imageUrl = getHeroImage(hero.name);
+            const pickRate = getPickRate(hero);
+            const banRate = getBanRate(hero);
+            const initials = getHeroInitials(hero.name);
+            const roleClass = getRoleClass(hero.role);
             
             return `
-              <div class="hero-card tier-badge-${tier} rounded-lg p-2 cursor-pointer" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
-                ${imageUrl ? 
-                  `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-tier mb-1" onerror="this.outerHTML='<div class=\\'hero-img-tier img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-                  `<div class="hero-img-tier img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-                }
+              <div class="hero-card tier-badge-${tier} rounded-lg p-2 text-center" onclick="showHeroDetails('${hero.name.replace(/'/g, "\\'")}')">
+                <div class="flex justify-center mb-1">
+                  <div class="hero-avatar ${roleClass}">${initials}</div>
+                </div>
                 <p class="text-xs font-bold truncate" title="${hero.name}">${hero.name}</p>
-                <p class="text-emerald-400 text-xs font-semibold">${winRate}%</p>
+                <div class="flex gap-1 justify-center mt-1">
+                  <span class="stat-badge stat-win">${winRate}%</span>
+                </div>
+                <div class="flex gap-1 justify-center mt-1 text-xs">
+                  <span class="text-amber-400">P:${pickRate}%</span>
+                  <span class="text-red-400">B:${banRate}%</span>
+                </div>
               </div>
             `;
           }).join('');
@@ -909,8 +771,6 @@
       renderTierList();
     }
 
-    // ==================== DRAFT SYSTEM ====================
-    
     function setDraftRole(role) {
       currentDraftRole = role;
       document.querySelectorAll('[data-draft-role]').forEach(btn => {
@@ -924,39 +784,35 @@
       const enemyContainer = document.getElementById('enemy-slots');
       
       allyContainer.innerHTML = Array(5).fill(0).map((_, i) => `
-        <div class="draft-slot rounded-lg p-2 text-center ${allyPicks[i] ? 'filled' : ''}">
-          ${allyPicks[i] ? (() => {
-            const imageUrl = getHeroImage(allyPicks[i].name);
-            return `
-              ${imageUrl ?
-                `<img src="${imageUrl}" alt="${allyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(allyPicks[i].name)}</div>'">` :
-                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(allyPicks[i].name)}</div>`
-              }
-              <p class="font-semibold text-xs">${allyPicks[i].name}</p>
-              <p class="text-xs text-slate-400">${allyPicks[i].role}</p>
-              <button onclick="removeHero('ally', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
-            `;
-          })() : `
-            <div class="text-slate-500 py-6 text-xs">Empty</div>
+        <div class="draft-slot rounded-lg text-center ${allyPicks[i] ? 'filled' : ''}">
+          ${allyPicks[i] ? `
+            <div class="flex items-center gap-2">
+              <div class="hero-avatar hero-avatar-sm ${getRoleClass(allyPicks[i].role)}">${getHeroInitials(allyPicks[i].name)}</div>
+              <div class="flex-1 text-left">
+                <p class="font-bold text-xs">${allyPicks[i].name}</p>
+                <p class="text-xs text-slate-400">${allyPicks[i].role}</p>
+              </div>
+              <button onclick="removeHero('ally', ${i})" class="text-xs text-red-400 hover:text-red-300">✕</button>
+            </div>
+          ` : `
+            <div class="text-slate-500 py-4 text-xs">Empty Slot ${i+1}</div>
           `}
         </div>
       `).join('');
       
       enemyContainer.innerHTML = Array(5).fill(0).map((_, i) => `
-        <div class="draft-slot enemy rounded-lg p-2 text-center ${enemyPicks[i] ? 'filled' : ''}">
-          ${enemyPicks[i] ? (() => {
-            const imageUrl = getHeroImage(enemyPicks[i].name);
-            return `
-              ${imageUrl ?
-                `<img src="${imageUrl}" alt="${enemyPicks[i].name}" class="hero-img-slot mx-auto mb-1" onerror="this.outerHTML='<div class=\\'hero-img-slot img-placeholder mx-auto mb-1\\'>${getHeroInitial(enemyPicks[i].name)}</div>'">` :
-                `<div class="hero-img-slot img-placeholder mx-auto mb-1">${getHeroInitial(enemyPicks[i].name)}</div>`
-              }
-              <p class="font-semibold text-xs">${enemyPicks[i].name}</p>
-              <p class="text-xs text-slate-400">${enemyPicks[i].role}</p>
-              <button onclick="removeHero('enemy', ${i})" class="mt-1 text-xs text-red-400 hover:text-red-300">Remove</button>
-            `;
-          })() : `
-            <div class="text-slate-500 py-6 text-xs">Empty</div>
+        <div class="draft-slot enemy rounded-lg text-center ${enemyPicks[i] ? 'filled' : ''}">
+          ${enemyPicks[i] ? `
+            <div class="flex items-center gap-2">
+              <div class="hero-avatar hero-avatar-sm ${getRoleClass(enemyPicks[i].role)}">${getHeroInitials(enemyPicks[i].name)}</div>
+              <div class="flex-1 text-left">
+                <p class="font-bold text-xs">${enemyPicks[i].name}</p>
+                <p class="text-xs text-slate-400">${enemyPicks[i].role}</p>
+              </div>
+              <button onclick="removeHero('enemy', ${i})" class="text-xs text-red-400 hover:text-red-300">✕</button>
+            </div>
+          ` : `
+            <div class="text-slate-500 py-4 text-xs">Empty Slot ${i+1}</div>
           `}
         </div>
       `).join('');
@@ -978,13 +834,13 @@
       filtered.sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)));
 
       pool.innerHTML = filtered.map(hero => {
-        const imageUrl = getHeroImage(hero.name);
+        const initials = getHeroInitials(hero.name);
+        const roleClass = getRoleClass(hero.role);
         return `
-          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-            }
+          <div class="hero-card rounded-lg p-1.5 text-center" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
+            <div class="flex justify-center mb-1">
+              <div class="hero-avatar hero-avatar-sm ${roleClass}">${initials}</div>
+            </div>
             <p class="text-xs font-semibold truncate" title="${hero.name}">${hero.name}</p>
             <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
           </div>
@@ -1053,8 +909,6 @@
       updateMatchupPredictor();
     }
 
-    // ==================== RECOMMENDATIONS ====================
-    
     function updateRecommendations() {
       const container = document.getElementById('recommendations');
       
@@ -1073,38 +927,32 @@
         .filter(h => !pickedNames.includes(h.name))
         .filter(h => neededRoles.length === 0 || neededRoles.includes(h.role))
         .sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)))
-        .slice(0, 6);
+        .slice(0, 5);
       
       if (recommendations.length === 0) {
-        container.innerHTML = '<p class="text-emerald-400 text-xs font-semibold">✓ Complete!</p>';
+        container.innerHTML = '<p class="text-emerald-400 text-xs font-semibold">✓ Team Complete!</p>';
         return;
       }
       
       container.innerHTML = recommendations.map(hero => {
         const reason = neededRoles.includes(hero.role) ? `Missing ${hero.role}` : 'High WR';
-        const imageUrl = getHeroImage(hero.name);
+        const initials = getHeroInitials(hero.name);
+        const roleClass = getRoleClass(hero.role);
         return `
-          <div class="recommendation-card rounded-lg p-2 cursor-pointer" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
+          <div class="recommendation-card cursor-pointer" onclick="selectHeroForDraft('${hero.name.replace(/'/g, "\\'")}')">
             <div class="flex items-center gap-2">
-              ${imageUrl ?
-                `<img src="${imageUrl}" alt="${hero.name}" class="w-10 h-10 rounded object-cover" onerror="this.outerHTML='<div class=\\'w-10 h-10 rounded img-placeholder text-sm\\'>${getHeroInitial(hero.name)}</div>'">` :
-                `<div class="w-10 h-10 rounded img-placeholder text-sm">${getHeroInitial(hero.name)}</div>`
-              }
+              <div class="hero-avatar hero-avatar-sm ${roleClass}">${initials}</div>
               <div class="flex-1 min-w-0">
                 <h4 class="font-bold text-xs truncate">${hero.name}</h4>
                 <p class="text-xs text-slate-400">${reason}</p>
               </div>
-              <div class="text-right">
-                <p class="text-emerald-400 font-bold text-xs">${getWinRate(hero)}%</p>
-              </div>
+              <p class="text-emerald-400 font-bold text-xs">${getWinRate(hero)}%</p>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // ==================== ADAPTIVE BUILD ====================
-    
     function updateBuildRecommendation() {
       const buildSection = document.getElementById('build-section');
       const buildContent = document.getElementById('build-content');
@@ -1127,53 +975,47 @@
       
       if (hero.role === 'Marksman') {
         if (totalTanky >= 3) {
-          buildItems = ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Corrosion Scythe', 'Wind of Nature'];
-          buildReason = `🎯 ANTI-TANK: ${totalTanky} tanky enemies. % HP damage build.`;
+          buildItems = ['Swift Boots', 'Demon Hunter Sword', 'Golden Staff', 'Malefic Roar', 'Wind of Nature', 'Immortality'];
+          buildReason = `🎯 ANTI-TANK BUILD - ${totalTanky} Tanky Enemies`;
         } else {
           buildItems = ['Swift Boots', 'Scarlet Phantom', 'Berserkers Fury', 'Windtalker', 'Malefic Roar', 'Wind of Nature'];
-          buildReason = `⚡ CRIT BUILD: Squishy enemies. Max burst damage.`;
+          buildReason = `⚡ CRIT BUILD - Squishy Team`;
         }
       } else if (hero.role === 'Mage') {
         if (totalTanky >= 3) {
-          buildItems = ['Tough Boots', 'Clock of Destiny', 'Divine Glaive', 'Holy Crystal', 'Lightning Truncheon', 'Winter Truncheon'];
-          buildReason = `🎯 PENETRATION: ${totalTanky} tanky enemies. Magic PEN focus.`;
+          buildItems = ['Clock of Destiny', 'Divine Glaive', 'Holy Crystal', 'Lightning Truncheon', 'Winter Truncheon', 'Immortality'];
+          buildReason = `🎯 PENETRATION BUILD - ${totalTanky} Tanky`;
         } else {
-          buildItems = ['Tough Boots', 'Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Winter Truncheon'];
-          buildReason = `⚡ BURST BUILD: Standard high damage.`;
+          buildItems = ['Clock of Destiny', 'Lightning Truncheon', 'Holy Crystal', 'Divine Glaive', 'Winter Truncheon', 'Immortality'];
+          buildReason = `⚡ BURST BUILD - Maximum Damage`;
         }
       } else if (hero.role === 'Tank') {
-        buildItems = ['Warrior Boots', 'Cursed Helmet', 'Antique Cuirass', 'Athenas Shield', 'Dominance Ice', 'Immortality'];
-        buildReason = `🛡️ BALANCED TANK: Armor + Magic Resist.`;
+        buildItems = ['Cursed Helmet', 'Antique Cuirass', 'Athenas Shield', 'Immortality', 'Blade of Despair', 'Hunter Strike'];
+        buildReason = `🛡️ BALANCED TANK BUILD`;
       } else {
-        buildItems = ['Warrior Boots', 'Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Athenas Shield', 'Immortality'];
-        buildReason = `⚔️ BALANCED: Damage + Survivability.`;
+        buildItems = ['Hunter Strike', 'Blade of Despair', 'Malefic Roar', 'Athenas Shield', 'Immortality', 'Wind of Nature'];
+        buildReason = `⚔️ BALANCED DPS BUILD`;
       }
       
-      const imageUrl = getHeroImage(hero.name);
+      const initials = getHeroInitials(hero.name);
+      const roleClass = getRoleClass(hero.role);
       buildContent.innerHTML = `
-        <div class="mb-3">
-          <div class="flex items-center gap-3 mb-2">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="w-12 h-12 rounded-lg" onerror="this.outerHTML='<div class=\\'w-12 h-12 rounded-lg img-placeholder text-xl\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="w-12 h-12 rounded-lg img-placeholder text-xl">${getHeroInitial(hero.name)}</div>`
-            }
-            <div>
-              <h3 class="text-lg font-bold">${hero.name}</h3>
-              <p class="text-purple-300 text-xs font-semibold">${buildReason}</p>
-            </div>
+        <div class="mb-4 flex items-center gap-3">
+          <div class="hero-avatar hero-avatar-lg ${roleClass}">${initials}</div>
+          <div>
+            <h3 class="text-lg font-bold">${hero.name}</h3>
+            <p class="text-purple-300 text-sm font-semibold">${buildReason}</p>
           </div>
         </div>
         
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
           ${buildItems.map(itemName => {
             const item = ITEMS[itemName];
             if (!item) return '';
             return `
-              <div class="build-card rounded-lg p-2">
-                <div class="flex items-center gap-2 mb-1">
-                  <div class="item-icon text-sm">${item.icon}</div>
-                  <p class="font-bold text-xs flex-1">${itemName}</p>
-                </div>
+              <div class="build-card p-2 text-center">
+                <div class="item-icon mx-auto mb-2">${item.icon}</div>
+                <p class="font-bold text-xs mb-1">${itemName}</p>
                 <p class="text-xs text-slate-400">${item.stats}</p>
               </div>
             `;
@@ -1182,8 +1024,6 @@
       `;
     }
 
-    // ==================== MATCHUP PREDICTOR ====================
-    
     function updateMatchupPredictor() {
       const resultDiv = document.getElementById('matchup-result');
       const emptyDiv = document.getElementById('matchup-empty');
@@ -1234,26 +1074,39 @@
       let analysis = [];
       
       if (yourWinRate >= 60) {
-        analysis.push('<div class="bg-emerald-500/20 border border-emerald-500/50 rounded-lg p-2 text-emerald-300 text-xs"><strong>🎯 Advantage:</strong> Your team is favored!</div>');
+        analysis.push(`<div class="bg-emerald-500/20 border-2 border-emerald-500/50 rounded-lg p-3">
+          <strong class="text-emerald-300 text-lg">🎯 STRONG ADVANTAGE</strong>
+          <p class="text-emerald-200 text-sm mt-1">Your team composition is superior. Play aggressively and pressure objectives.</p>
+        </div>`);
       } else if (yourWinRate <= 40) {
-        analysis.push('<div class="bg-red-500/20 border border-red-500/50 rounded-lg p-2 text-red-300 text-xs"><strong>⚠️ Disadvantage:</strong> Play safe, look for picks.</div>');
+        analysis.push(`<div class="bg-red-500/20 border-2 border-red-500/50 rounded-lg p-3">
+          <strong class="text-red-300 text-lg">⚠️ DISADVANTAGE</strong>
+          <p class="text-red-200 text-sm mt-1">Enemy has the edge. Play defensively, look for picks, and avoid team fights early.</p>
+        </div>`);
       } else {
-        analysis.push('<div class="bg-blue-500/20 border border-blue-500/50 rounded-lg p-2 text-blue-300 text-xs"><strong>⚖️ Even:</strong> Execution matters.</div>');
+        analysis.push(`<div class="bg-blue-500/20 border-2 border-blue-500/50 rounded-lg p-3">
+          <strong class="text-blue-300 text-lg">⚖️ EVEN MATCHUP</strong>
+          <p class="text-blue-200 text-sm mt-1">Balanced teams. Execution and strategy will decide the outcome.</p>
+        </div>`);
       }
       
       if (allyTanks === 0 && enemyTanks > 0) {
-        analysis.push('<div class="bg-amber-500/20 border border-amber-500/50 rounded-lg p-2 text-amber-300 text-xs"><strong>🛡️ No Tank:</strong> Stay grouped and kite.</div>');
+        analysis.push(`<div class="bg-amber-500/20 border-2 border-amber-500/50 rounded-lg p-3">
+          <strong class="text-amber-300">🛡️ NO TANK WARNING</strong>
+          <p class="text-amber-200 text-sm mt-1">Missing frontline. Stay grouped, kite effectively, and avoid getting engaged on.</p>
+        </div>`);
       }
       
       if (allyDPS < enemyDPS) {
-        analysis.push('<div class="bg-purple-500/20 border border-purple-500/50 rounded-lg p-2 text-purple-300 text-xs"><strong>💥 Less Damage:</strong> Focus picks and objectives.</div>');
+        analysis.push(`<div class="bg-purple-500/20 border-2 border-purple-500/50 rounded-lg p-3">
+          <strong class="text-purple-300">💥 DAMAGE DEFICIT</strong>
+          <p class="text-purple-200 text-sm mt-1">Enemy has more damage dealers. Focus on picks and split push opportunities.</p>
+        </div>`);
       }
       
       analysisDiv.innerHTML = analysis.join('');
     }
 
-    // ==================== COUNTERS ====================
-    
     function searchCounterHero() {
       const searchTerm = document.getElementById('search-counter').value.toLowerCase();
       const results = document.getElementById('counter-results');
@@ -1267,13 +1120,13 @@
       const filtered = allHeroes.filter(h => h.name.toLowerCase().includes(searchTerm)).slice(0, 12);
       
       results.innerHTML = filtered.map(hero => {
-        const imageUrl = getHeroImage(hero.name);
+        const initials = getHeroInitials(hero.name);
+        const roleClass = getRoleClass(hero.role);
         return `
-          <div class="hero-card rounded-lg p-1.5 cursor-pointer text-center" onclick="analyzeHero('${hero.name.replace(/'/g, "\\'")}')">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(hero.name)}</div>`
-            }
+          <div class="hero-card rounded-lg p-1.5 text-center" onclick="analyzeHero('${hero.name.replace(/'/g, "\\'")}')">
+            <div class="flex justify-center mb-1">
+              <div class="hero-avatar hero-avatar-sm ${roleClass}">${initials}</div>
+            </div>
             <p class="text-xs font-semibold truncate">${hero.name}</p>
             <p class="text-xs text-emerald-400">${getWinRate(hero)}%</p>
           </div>
@@ -1295,40 +1148,34 @@
         .sort((a, b) => parseFloat(getWinRate(b)) - parseFloat(getWinRate(a)))
         .slice(0, 6);
       
-      const imageUrl = getHeroImage(hero.name);
+      const initials = getHeroInitials(hero.name);
+      const roleClass = getRoleClass(hero.role);
       const analysisDiv = document.getElementById('counter-analysis');
       analysisDiv.classList.remove('hidden');
       analysisDiv.innerHTML = `
-        <div class="mb-6">
-          <div class="flex items-center justify-center gap-3 mb-4">
-            ${imageUrl ?
-              `<img src="${imageUrl}" alt="${hero.name}" class="w-20 h-20 rounded-lg" onerror="this.outerHTML='<div class=\\'w-20 h-20 rounded-lg img-placeholder text-3xl\\'>${getHeroInitial(hero.name)}</div>'">` :
-              `<div class="w-20 h-20 rounded-lg img-placeholder text-3xl">${getHeroInitial(hero.name)}</div>`
-            }
-            <div class="text-left">
-              <h3 class="text-xl font-bold">${hero.name}</h3>
-              <p class="text-slate-400 text-sm">${hero.role}</p>
-              <div class="flex gap-2 mt-1 text-xs">
-                <span class="text-emerald-400 font-semibold">WR: ${getWinRate(hero)}%</span>
-                <span class="text-amber-400 font-semibold">P: ${getPickRate(hero)}%</span>
-                <span class="text-red-400 font-semibold">B: ${getBanRate(hero)}%</span>
-              </div>
-            </div>
+        <div class="mb-6 text-center">
+          <div class="hero-avatar hero-avatar-lg ${roleClass} mx-auto mb-3">${initials}</div>
+          <h3 class="text-2xl font-bold">${hero.name}</h3>
+          <p class="text-slate-400 text-sm">${hero.role}</p>
+          <div class="flex gap-3 justify-center mt-3">
+            <span class="stat-badge stat-win">WR: ${getWinRate(hero)}%</span>
+            <span class="stat-badge stat-pick">Pick: ${getPickRate(hero)}%</span>
+            <span class="stat-badge stat-ban">Ban: ${getBanRate(hero)}%</span>
           </div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 class="text-lg font-bold mb-3 text-red-400">⚔️ Counters</h4>
+            <h4 class="text-lg font-bold mb-3 text-red-400">⚔️ Strong Against (Counters)</h4>
             <div class="grid grid-cols-3 gap-2">
               ${counters.map(h => {
-                const cImageUrl = getHeroImage(h.name);
+                const cInitials = getHeroInitials(h.name);
+                const cRoleClass = getRoleClass(h.role);
                 return `
-                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    ${cImageUrl ?
-                      `<img src="${cImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
-                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
-                    }
+                  <div class="hero-card rounded-lg p-2 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    <div class="flex justify-center mb-1">
+                      <div class="hero-avatar hero-avatar-sm ${cRoleClass}">${cInitials}</div>
+                    </div>
                     <p class="text-xs font-semibold truncate">${h.name}</p>
                     <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
                   </div>
@@ -1338,16 +1185,16 @@
           </div>
           
           <div>
-            <h4 class="text-lg font-bold mb-3 text-blue-400">🤝 Synergies</h4>
+            <h4 class="text-lg font-bold mb-3 text-blue-400">🤝 Works Well With (Synergies)</h4>
             <div class="grid grid-cols-3 gap-2">
               ${synergies.map(h => {
-                const sImageUrl = getHeroImage(h.name);
+                const sInitials = getHeroInitials(h.name);
+                const sRoleClass = getRoleClass(h.role);
                 return `
-                  <div class="hero-card rounded-lg p-1.5 text-center cursor-pointer" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
-                    ${sImageUrl ?
-                      `<img src="${sImageUrl}" alt="${h.name}" class="hero-img-draft mb-1" onerror="this.outerHTML='<div class=\\'hero-img-draft img-placeholder mb-1\\'>${getHeroInitial(h.name)}</div>'">` :
-                      `<div class="hero-img-draft img-placeholder mb-1">${getHeroInitial(h.name)}</div>`
-                    }
+                  <div class="hero-card rounded-lg p-2 text-center" onclick="analyzeHero('${h.name.replace(/'/g, "\\'")}')">
+                    <div class="flex justify-center mb-1">
+                      <div class="hero-avatar hero-avatar-sm ${sRoleClass}">${sInitials}</div>
+                    </div>
                     <p class="text-xs font-semibold truncate">${h.name}</p>
                     <p class="text-xs text-emerald-400">${getWinRate(h)}%</p>
                   </div>
@@ -1364,10 +1211,10 @@
       if (!hero) return;
       
       const tier = getTier(getWinRate(hero)).toUpperCase();
-      const queueName = currentQueueType === 'solo' ? 'Solo Queue' : '5-Stack';
+      const modeName = currentQueueType === 'solo' ? 'Solo Queue' : 'Pro Play';
       
       alert(`
-${hero.name} (${queueName})
+${hero.name} (${modeName})
 ━━━━━━━━━━━━━━━━━
 Role: ${hero.role}
 Tier: ${tier}
@@ -1378,8 +1225,6 @@ Ban Rate: ${getBanRate(hero)}%
       `);
     }
 
-    // ==================== TAB SYSTEM ====================
-    
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -1392,8 +1237,6 @@ Ban Rate: ${getBanRate(hero)}%
       }
     }
 
-    // ==================== START ====================
-    
     window.addEventListener('DOMContentLoaded', init);
   </script>
 
