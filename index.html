@@ -498,7 +498,7 @@
       
       'Aamon': 'Assassin', 'Alucard': 'Assassin', 'Benedetta': 'Assassin', 'Fanny': 'Assassin', 'Gusion': 'Assassin',
       'Hanzo': 'Assassin', 'Harley': 'Assassin', 'Hayabusa': 'Assassin', 'Helcurt': 'Assassin', 'Joy': 'Assassin',
-      'Karina': 'Assassin', 'Lancelot': 'Assassin', 'Ling': 'Assassin', 'Marcel': 'Assassin', 'Natalia': 'Assassin',
+      'Karina': 'Assassin', 'Lancelot': 'Assassin', 'Ling': 'Assassin', 'Natalia': 'Assassin',
       'Saber': 'Assassin', 'Selena': 'Assassin', 'Yi Sun-shin': 'Assassin',
       
       'Alice': 'Mage', 'Aurora': 'Mage', 'Cecilion': 'Mage', 'Chang\'e': 'Mage', 'Cyclops': 'Mage',
@@ -509,12 +509,12 @@
       'Zhask': 'Mage',
       
       'Beatrix': 'Marksman', 'Brody': 'Marksman', 'Bruno': 'Marksman', 'Claude': 'Marksman', 'Clint': 'Marksman',
-      'Granger': 'Marksman', 'Hanabi': 'Marksman', 'Irithel': 'Marksman', 'Karrie': 'Marksman', 'Layla': 'Marksman',
+      'Granger': 'Marksman', 'Hanabi': 'Marksman', 'Irithel': 'Marksman', 'Ixia': 'Marksman', 'Karrie': 'Marksman', 'Layla': 'Marksman',
       'Lesley': 'Marksman', 'Melissa': 'Marksman', 'Miya': 'Marksman', 'Moskov': 'Marksman', 'Natan': 'Marksman',
       'Popol and Kupa': 'Marksman', 'Wanwan': 'Marksman',
       
       'Angela': 'Support', 'Carmilla': 'Support', 'Chip': 'Support', 'Diggie': 'Support', 'Estes': 'Support',
-      'Floryn': 'Support', 'Mathilda': 'Support', 'Rafaela': 'Support'
+      'Floryn': 'Support', 'Marcel': 'Support', 'Mathilda': 'Support', 'Rafaela': 'Support'
     };
 
     const ITEMS = {
@@ -1161,31 +1161,28 @@
       const hero = typeof winRate === 'object' ? winRate : null;
       
       if (hero) {
-        // Full hero object - use weighted calculation
+        // Full hero object - use WR primarily with ban rate boost
         const wr = parseFloat(hero.winRateSolo || hero.winRatePro || 50);
         const pr = parseFloat(hero.pickRateSolo || hero.pickRatePro || 5);
         const br = parseFloat(hero.banRateSolo || hero.banRatePro || 0);
         
-        // Weighted score: WR (40%) + PR (35%) + BR (25%)
-        const score = (wr * 0.40) + (pr * 0.35) + (br * 0.25);
-        
-        // S-tier: High score OR perma-ban (40%+ ban rate)
-        if (score >= 55 || br >= 40) return 's';
+        // S-tier: 52%+ WR OR 40%+ ban rate (perma-bans)
+        if (wr >= 52 || br >= 40) return 's';
         
         // SITUATIONAL: High WR + Low PR (niche picks)
         // Example: Diggie (54% WR, 7% PR) vs Floryn (54% WR, 12% PR)
         if (wr >= 52 && pr < 8 && br < 15) return 'situational';
         
-        // A-tier: Good all-around
-        if (score >= 50) return 'a';
+        // A-tier: 50-52% WR
+        if (wr >= 50) return 'a';
         
-        // B-tier: Average
-        if (score >= 48) return 'b';
+        // B-tier: 48-50% WR
+        if (wr >= 48) return 'b';
         
-        // C-tier: Weak
-        if (score >= 45) return 'c';
+        // C-tier: 46-48% WR
+        if (wr >= 46) return 'c';
         
-        // D-tier: Very weak
+        // D-tier: <46% WR
         return 'd';
       } else {
         // Legacy support: just winRate number
