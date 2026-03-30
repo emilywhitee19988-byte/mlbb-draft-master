@@ -715,10 +715,15 @@
         <div class="patch-info">📊 80+ Heroes • Updated March 29, 2026</div>
 
       <!-- Navigation Tabs -->
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('tierlist')">📊 Tier List</button>
-        <button class="tab-btn" onclick="switchTab('draft')">🎯 Draft Simulator</button>
+      <div style="display: flex; gap: 10px; margin: 20px 0; padding: 10px; background: rgba(30, 41, 59, 0.8); border-radius: 10px; border: 2px solid #3b82f6;">
+        <button onclick="switchTab('tierlist')" id="tab-tierlist" style="flex: 1; padding: 18px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border: none; border-radius: 8px; color: white; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+          📊 Tier List
+        </button>
+        <button onclick="switchTab('draft')" id="tab-draft" style="flex: 1; padding: 18px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; color: #94a3b8; font-weight: 700; font-size: 1.1rem; cursor: pointer;">
+          🎯 Draft Simulator
+        </button>
       </div>
+
       </div>
 
       <div class="controls">
@@ -2360,22 +2365,31 @@
       if (tab === 'tierlist') {
         document.getElementById('view-tierlist').classList.add('active');
         document.getElementById('view-draft').classList.remove('active');
+        
+        // Update button styles
+        document.getElementById('tab-tierlist').style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+        document.getElementById('tab-tierlist').style.color = 'white';
+        document.getElementById('tab-tierlist').style.border = 'none';
+        document.getElementById('tab-draft').style.background = '#1e293b';
+        document.getElementById('tab-draft').style.color = '#94a3b8';
+        document.getElementById('tab-draft').style.border = '2px solid #334155';
       } else if (tab === 'draft') {
         document.getElementById('view-tierlist').classList.remove('active');
         document.getElementById('view-draft').classList.add('active');
+        
+        // Update button styles
+        document.getElementById('tab-draft').style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+        document.getElementById('tab-draft').style.color = 'white';
+        document.getElementById('tab-draft').style.border = 'none';
+        document.getElementById('tab-tierlist').style.background = '#1e293b';
+        document.getElementById('tab-tierlist').style.color = '#94a3b8';
+        document.getElementById('tab-tierlist').style.border = '2px solid #334155';
         
         if (!draftInitialized) {
           initDraft();
           draftInitialized = true;
         }
       }
-      
-      // Update tab buttons
-      var tabs = document.querySelectorAll('.tab-btn');
-      tabs.forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
     }
     
     // Initialize draft simulator
