@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎯 HOK Draft Simulator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 15px;
+      border: 2px solid #3b82f6;
+    }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .draft-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .panel {
+      background: rgba(30, 41, 59, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #334155;
+    }
+    .panel h2 { color: #60a5fa; margin-bottom: 15px; }
+    .role-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0; }
+    .role-btn {
+      padding: 12px 24px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .role-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+    .hero-select {
+      width: 100%;
+      padding: 12px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+    @media (max-width: 768px) {
+      .draft-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 HOK Draft Simulator</h1>
+      <p>74 Global Heroes • Smart Counter Suggestions</p>
+    </div>
+    
+    <div class="draft-grid">
+      <div class="panel">
+        <h2>👤 Your Pick</h2>
+        <div class="role-buttons">
+          <button class="role-btn" onclick="selectRole('Tank')">Tank</button>
+          <button class="role-btn" onclick="selectRole('Fighter')">Fighter</button>
+          <button class="role-btn" onclick="selectRole('Assassin')">Assassin</button>
+          <button class="role-btn" onclick="selectRole('Mage')">Mage</button>
+          <button class="role-btn" onclick="selectRole('Marksman')">Marksman</button>
+          <button class="role-btn" onclick="selectRole('Support')">Support</button>
+        </div>
+        <div id="your-hero-select"></div>
+      </div>
+      
+      <div class="panel">
+        <h2>⚔️ Enemy Team</h2>
+        <select class="hero-select" id="enemy1" onchange="updateAnalysis()">
+          <option value="">Enemy Pick 1</option>
+        </select>
+        <select class="hero-select" id="enemy2" onchange="updateAnalysis()">
+          <option value="">Enemy Pick 2</option>
+        </select>
+        <select class="hero-select" id="enemy3" onchange="updateAnalysis()">
+          <option value="">Enemy Pick 3</option>
+        </select>
+        <select class="hero-select" id="enemy4" onchange="updateAnalysis()">
+          <option value="">Enemy Pick 4</option>
+        </select>
+        <select class="hero-select" id="enemy5" onchange="updateAnalysis()">
+          <option value="">Enemy Pick 5</option>
+        </select>
+        <div id="suggestions" style="margin-top: 20px; padding: 15px; background: rgba(16,185,129,0.1); border-radius: 10px;">
+          <h4 style="color: #10b981;">💡 Pick enemies to see suggestions</h4>
+        </div>
+        
+        <div id="build-advice" style="margin-top: 20px; padding: 15px; background: rgba(251,191,36,0.1); border-radius: 10px; border: 2px solid rgba(251,191,36,0.3); display: none;">
+          <h4 style="color: #fbbf24; margin-bottom: 10px;">⚔️ Build Advice</h4>
+          <div id="build-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+    // HEROES DATA FROM WORKING TIER LIST
+    const HEROES = {
+      // S-TIER (Meta Defining)
+      'jing': {
+        id: 'jing',
+        nameEn: 'Jing',
+        nameEnAlt: 'Mirror',
+        nameCn: '镜',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: ['Mid'],
+        tier: 'S',
+        difficulty: 4,
+        winRate: 54.2,
+        pickRate: 23.0,
+        banRate: 45.0,
+        avatar: '🗡️',
+        counters: {
+          jungle: {
+            weak: ['lam', 'xuance', 'donghuang', 'caiyan'],
+            strong: ['daji', 'angela', 'luban', 'houyi', 'ying']
+          },
+          mid: {
+            weak: ['diaochan', 'yao', 'zhouyu'],
+            strong: ['angela', 'ying', 'huangzhong']
+          }
+        }
+      },
+      'yao': {
+        id: 'yao',
+        nameEn: 'Yao',
+        nameEnAlt: 'Yaria',
+        nameCn: '瑶',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 2,
+        winRate: 53.8,
+        pickRate: 19.0,
+        banRate: 38.0,
+        avatar: '🦋'
+      },
+      'luban': {
+        id: 'luban',
+        nameEn: 'Luban No.7',
+        nameEnAlt: null,
+        nameCn: '鲁班七号',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 1,
+        winRate: 52.9,
+        pickRate: 22.0,
+        banRate: 15.0,
+        avatar: '🤖'
+      },
+      'daji': {
+        id: 'daji',
+        nameEn: 'Daji',
+        nameEnAlt: null,
+        nameCn: '妲己',
+        role: 'Mage',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 2,
+        winRate: 53.5,
+        pickRate: 18.0,
+        banRate: 25.0,
+        avatar: '🦊'
+      },
+      'gaochanggong': {
+        id: 'gaochanggong',
+        nameEn: 'Gao Changgong',
+        nameEnAlt: 'Lancelot',
+        nameCn: '兰陵王',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: ['Mid'],
+        tier: 'S',
+        difficulty: 3,
+        winRate: 52.8,
+        pickRate: 20.0,
+        banRate: 35.0,
+        avatar: '👤'
+      },
+      'augran': {
+        id: 'augran',
+        nameEn: 'Augran',
+        nameEnAlt: null,
+        nameCn: '敖隐',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: ['Baron'],
+        tier: 'S',
+        difficulty: 3,
+        winRate: 53.2,
+        pickRate: 21.0,
+        banRate: 42.0,
+        avatar: '🐉'
+      },
+      'arke': {
+        id: 'arke',
+        nameEn: 'Arke',
+        nameEnAlt: null,
+        nameCn: '阿古朵',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 2,
+        winRate: 52.7,
+        pickRate: 17.0,
+        banRate: 28.0,
+        avatar: '🎯'
+      },
+      'feyd': {
+        id: 'feyd',
+        nameEn: 'Feyd',
+        nameEnAlt: null,
+        nameCn: '费奥',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 3,
+        winRate: 52.5,
+        pickRate: 16.0,
+        banRate: 30.0,
+        avatar: '⚡'
+      },
+      'chicha': {
+        id: 'chicha',
+        nameEn: 'Chicha',
+        nameEnAlt: null,
+        nameCn: '姬小满',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'S',
+        difficulty: 2,
+        winRate: 52.6,
+        pickRate: 15.0,
+        banRate: 20.0,
+        avatar: '🌸'
+      },
+      'lam': {
+        id: 'lam',
+        nameEn: 'Lam',
+        nameEnAlt: 'Lan',
+        nameCn: '澜',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: ['Baron'],
+        tier: 'S',
+        difficulty: 3,
+        winRate: 52.3,
+        pickRate: 14.0,
+        banRate: 25.0,
+        avatar: '🌊'
+      },
+
+      // A-TIER (Strong Picks)
+      'luna': {
+        id: 'luna',
+        nameEn: 'Luna',
+        nameEnAlt: 'Diana',
+        nameCn: '露娜',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: ['Baron'],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 51.8,
+        pickRate: 18.0,
+        banRate: 12.0,
+        avatar: '🌙'
+      },
+      'ukyotachibana': {
+        id: 'ukyotachibana',
+        nameEn: 'Ukyo Tachibana',
+        nameEnAlt: null,
+        nameCn: '橘右京',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: ['Mid', 'Jungle'],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 52.1,
+        pickRate: 15.0,
+        banRate: 8.0,
+        avatar: '⚔️'
+      },
+      'donghuang': {
+        id: 'donghuang',
+        nameEn: 'Donghuang',
+        nameEnAlt: 'Donghuang Taiyi',
+        nameCn: '东皇太一',
+        role: 'Tank',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 52.3,
+        pickRate: 14.0,
+        banRate: 22.0,
+        avatar: '🌟'
+      },
+      'angela': {
+        id: 'angela',
+        nameEn: 'Angela',
+        nameEnAlt: null,
+        nameCn: '安琪拉',
+        role: 'Mage',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 51.2,
+        pickRate: 16.0,
+        banRate: 18.0,
+        avatar: '🔮'
+      },
+      'xuance': {
+        id: 'xuance',
+        nameEn: 'Xuance',
+        nameEnAlt: 'Baili Xuance',
+        nameCn: '百里玄策',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 4,
+        winRate: 51.4,
+        pickRate: 14.0,
+        banRate: 30.0,
+        avatar: '🎣'
+      },
+      'marcopolo': {
+        id: 'marcopolo',
+        nameEn: 'Marco Polo',
+        nameEnAlt: null,
+        nameCn: '马可波罗',
+        role: 'Marksman',
+        primaryLane: 'Jungle',
+        viableLanes: ['Farm'],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 51.9,
+        pickRate: 17.0,
+        banRate: 15.0,
+        avatar: '🏹'
+      },
+      'daqiao': {
+        id: 'daqiao',
+        nameEn: 'Da Qiao',
+        nameEnAlt: null,
+        nameCn: '大乔',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 51.5,
+        pickRate: 13.0,
+        banRate: 12.0,
+        avatar: '🎋'
+      },
+      'houyi': {
+        id: 'houyi',
+        nameEn: 'Hou Yi',
+        nameEnAlt: null,
+        nameCn: '后羿',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 51.3,
+        pickRate: 16.0,
+        banRate: 10.0,
+        avatar: '🏹'
+      },
+      'dolia': {
+        id: 'dolia',
+        nameEn: 'Dolia',
+        nameEnAlt: null,
+        nameCn: '朵莉亚',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 51.6,
+        pickRate: 12.0,
+        banRate: 8.0,
+        avatar: '🌺'
+      },
+      'allain': {
+        id: 'allain',
+        nameEn: 'Allain',
+        nameEnAlt: null,
+        nameCn: '艾琳',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 2,
+        winRate: 51.1,
+        pickRate: 11.0,
+        banRate: 5.0,
+        avatar: '💎'
+      },
+      'dun': {
+        id: 'dun',
+        nameEn: 'Dun',
+        nameEnAlt: null,
+        nameCn: '盾山',
+        role: 'Tank',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 1,
+        winRate: 51.4,
+        pickRate: 10.0,
+        banRate: 6.0,
+        avatar: '🛡️'
+      },
+
+      // B-TIER (Balanced)
+      'arthur': {
+        id: 'arthur',
+        nameEn: 'Arthur',
+        nameEnAlt: null,
+        nameCn: '亚瑟',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.5,
+        pickRate: 12.0,
+        banRate: 3.0,
+        avatar: '⚔️'
+      },
+      'zhangfei': {
+        id: 'zhangfei',
+        nameEn: 'Zhang Fei',
+        nameEnAlt: null,
+        nameCn: '张飞',
+        role: 'Tank',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.8,
+        pickRate: 11.0,
+        banRate: 5.0,
+        avatar: '💪'
+      },
+      'diaochan': {
+        id: 'diaochan',
+        nameEn: 'Diaochan',
+        nameEnAlt: null,
+        nameCn: '貂蝉',
+        role: 'Mage',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.8,
+        pickRate: 10.0,
+        banRate: 6.0,
+        avatar: '💃'
+      },
+      'lubu': {
+        id: 'lubu',
+        nameEn: 'Lu Bu',
+        nameEnAlt: null,
+        nameCn: '吕布',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.1,
+        pickRate: 9.0,
+        banRate: 2.0,
+        avatar: '🐎'
+      },
+      'caiyan': {
+        id: 'caiyan',
+        nameEn: 'Cai Yan',
+        nameEnAlt: 'Cai Wenji',
+        nameCn: '蔡文姬',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.4,
+        pickRate: 8.0,
+        banRate: 10.0,
+        avatar: '🎵'
+      },
+      'maishiranui': {
+        id: 'maishiranui',
+        nameEn: 'Mai Shiranui',
+        nameEnAlt: null,
+        nameCn: '不知火舞',
+        role: 'Assassin',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.3,
+        pickRate: 9.0,
+        banRate: 4.0,
+        avatar: '🔥'
+      },
+      'charlotte': {
+        id: 'charlotte',
+        nameEn: 'Charlotte',
+        nameEnAlt: null,
+        nameCn: '夏洛特',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.2,
+        pickRate: 8.0,
+        banRate: 3.0,
+        avatar: '🎠'
+      },
+      'biron': {
+        id: 'biron',
+        nameEn: 'Biron',
+        nameEnAlt: null,
+        nameCn: '暃',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.0,
+        pickRate: 7.0,
+        banRate: 2.0,
+        avatar: '🌅'
+      },
+      'shouyue': {
+        id: 'shouyue',
+        nameEn: 'Shouyue',
+        nameEnAlt: null,
+        nameCn: '守约',
+        role: 'Assassin',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.9,
+        pickRate: 10.0,
+        banRate: 5.0,
+        avatar: '🎯'
+      },
+      'kui': {
+        id: 'kui',
+        nameEn: 'Kui',
+        nameEnAlt: null,
+        nameCn: '夔',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.1,
+        pickRate: 7.0,
+        banRate: 4.0,
+        avatar: '🐂'
+      },
+      'zhuangzi': {
+        id: 'zhuangzi',
+        nameEn: 'Zhuangzi',
+        nameEnAlt: null,
+        nameCn: '庄周',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.3,
+        pickRate: 6.0,
+        banRate: 3.0,
+        avatar: '🐟'
+      },
+      'heino': {
+        id: 'heino',
+        nameEn: 'Heino',
+        nameEnAlt: null,
+        nameCn: '海诺',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.8,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '🦅'
+      },
+
+      // C-TIER (Situational)
+      'wukong': {
+        id: 'wukong',
+        nameEn: 'Wukong',
+        nameEnAlt: 'Sun Wukong',
+        nameCn: '孙悟空',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 3,
+        winRate: 47.9,
+        pickRate: 7.0,
+        banRate: 1.0,
+        avatar: '🐵'
+      },
+      'kaizer': {
+        id: 'kaizer',
+        nameEn: 'Kaizer',
+        nameEnAlt: null,
+        nameCn: '铠',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.2,
+        pickRate: 6.0,
+        banRate: 1.0,
+        avatar: '⚔️'
+      },
+      'huangzhong': {
+        id: 'huangzhong',
+        nameEn: 'Huang Zhong',
+        nameEnAlt: null,
+        nameCn: '黄忠',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.5,
+        pickRate: 5.0,
+        banRate: 1.0,
+        avatar: '🎯'
+      },
+      'zilong': {
+        id: 'zilong',
+        nameEn: 'Zilong',
+        nameEnAlt: null,
+        nameCn: '赵云',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 1,
+        winRate: 48.0,
+        pickRate: 6.0,
+        banRate: 1.0,
+        avatar: '🐲'
+      },
+      'nezha': {
+        id: 'nezha',
+        nameEn: 'Nezha',
+        nameEnAlt: null,
+        nameCn: '哪吒',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.3,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '🔱'
+      },
+      'shangguan': {
+        id: 'shangguan',
+        nameEn: 'Shangguan',
+        nameEnAlt: null,
+        nameCn: '上官婉儿',
+        role: 'Assassin',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 4,
+        winRate: 47.8,
+        pickRate: 8.0,
+        banRate: 3.0,
+        avatar: '📜'
+      },
+
+      // MORE HEROES (Adding more to reach 80+)
+      'libai': {
+        id: 'libai',
+        nameEn: 'Li Bai',
+        nameEnAlt: null,
+        nameCn: '李白',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 4,
+        winRate: 50.1,
+        pickRate: 12.0,
+        banRate: 8.0,
+        avatar: '🗡️'
+      },
+      'hanxin': {
+        id: 'hanxin',
+        nameEn: 'Han Xin',
+        nameEnAlt: null,
+        nameCn: '韩信',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 4,
+        winRate: 49.8,
+        pickRate: 11.0,
+        banRate: 7.0,
+        avatar: '⚡'
+      },
+      'mulan': {
+        id: 'mulan',
+        nameEn: 'Mulan',
+        nameEnAlt: null,
+        nameCn: '花木兰',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 50.3,
+        pickRate: 9.0,
+        banRate: 4.0,
+        avatar: '⚔️'
+      },
+      'guanyu': {
+        id: 'guanyu',
+        nameEn: 'Guan Yu',
+        nameEnAlt: null,
+        nameCn: '关羽',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.2,
+        pickRate: 8.0,
+        banRate: 3.0,
+        avatar: '🐉'
+      },
+      'lixin': {
+        id: 'lixin',
+        nameEn: 'Li Xin',
+        nameEnAlt: null,
+        nameCn: '李信',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.9,
+        pickRate: 7.0,
+        banRate: 2.0,
+        avatar: '⚔️'
+      },
+      'liubei': {
+        id: 'liubei',
+        nameEn: 'Liu Bei',
+        nameEnAlt: null,
+        nameCn: '刘备',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.0,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '⚔️'
+      },
+      'machao': {
+        id: 'machao',
+        nameEn: 'Ma Chao',
+        nameEnAlt: null,
+        nameCn: '马超',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 51.2,
+        pickRate: 10.0,
+        banRate: 6.0,
+        avatar: '🐎'
+      },
+      'caocao': {
+        id: 'caocao',
+        nameEn: 'Cao Cao',
+        nameEnAlt: null,
+        nameCn: '曹操',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.4,
+        pickRate: 7.0,
+        banRate: 3.0,
+        avatar: '👑'
+      },
+      'sunce': {
+        id: 'sunce',
+        nameEn: 'Sun Ce',
+        nameEnAlt: null,
+        nameCn: '孙策',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.7,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '🌊'
+      },
+      'xiangyu': {
+        id: 'xiangyu',
+        nameEn: 'Xiang Yu',
+        nameEnAlt: null,
+        nameCn: '项羽',
+        role: 'Tank',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.5,
+        pickRate: 5.0,
+        banRate: 1.0,
+        avatar: '🛡️'
+      },
+      'dharma': {
+        id: 'dharma',
+        nameEn: 'Dharma',
+        nameEnAlt: null,
+        nameCn: '达摩',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.5,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '🙏'
+      },
+      'pei': {
+        id: 'pei',
+        nameEn: 'Pei',
+        nameEnAlt: null,
+        nameCn: '裴擒虎',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 50.0,
+        pickRate: 8.0,
+        banRate: 4.0,
+        avatar: '🐯'
+      },
+      'simahyi': {
+        id: 'simayi',
+        nameEn: 'Sima Yi',
+        nameEnAlt: null,
+        nameCn: '司马懿',
+        role: 'Assassin',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 3,
+        winRate: 48.2,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '🦅'
+      },
+      'ying': {
+        id: 'ying',
+        nameEn: 'Ying',
+        nameEnAlt: null,
+        nameCn: '嬴政',
+        role: 'Mage',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.8,
+        pickRate: 7.0,
+        banRate: 3.0,
+        avatar: '👑'
+      },
+      'zhouyu': {
+        id: 'zhouyu',
+        nameEn: 'Zhou Yu',
+        nameEnAlt: null,
+        nameCn: '周瑜',
+        role: 'Mage',
+        primaryLane: 'Mid',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.6,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '🔥'
+      },
+      'dianwei': {
+        id: 'dianwei',
+        nameEn: 'Dian Wei',
+        nameEnAlt: null,
+        nameCn: '典韦',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.1,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '⚔️'
+      },
+      'nakoruru': {
+        id: 'nakoruru',
+        nameEn: 'Nakoruru',
+        nameEnAlt: null,
+        nameCn: '娜可露露',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.6,
+        pickRate: 7.0,
+        banRate: 3.0,
+        avatar: '🦅'
+      },
+      'sunbin': {
+        id: 'sunbin',
+        nameEn: 'Sun Bin',
+        nameEnAlt: null,
+        nameCn: '孙膑',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.9,
+        pickRate: 6.0,
+        banRate: 3.0,
+        avatar: '📖'
+      },
+      'guiguzi': {
+        id: 'guiguzi',
+        nameEn: 'Guiguzi',
+        nameEnAlt: null,
+        nameCn: '鬼谷子',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 50.2,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '👻'
+      },
+      'miyue': {
+        id: 'miyue',
+        nameEn: 'Mi Yue',
+        nameEnAlt: null,
+        nameCn: '芈月',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.8,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '🌙'
+      },
+      'yango': {
+        id: 'yango',
+        nameEn: 'Yango',
+        nameEnAlt: null,
+        nameCn: '杨戬',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 2,
+        winRate: 48.3,
+        pickRate: 4.0,
+        banRate: 1.0,
+        avatar: '🐕'
+      },
+      'pangu': {
+        id: 'pangu',
+        nameEn: 'Pangu',
+        nameEnAlt: null,
+        nameCn: '盘古',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 51.3,
+        pickRate: 9.0,
+        banRate: 7.0,
+        avatar: '⚒️'
+      },
+      'musashi': {
+        id: 'musashi',
+        nameEn: 'Musashi',
+        nameEnAlt: null,
+        nameCn: '宫本武藏',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.9,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '⚔️'
+      },
+      'athena': {
+        id: 'athena',
+        nameEn: 'Athena',
+        nameEnAlt: null,
+        nameCn: '雅典娜',
+        role: 'Fighter',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.7,
+        pickRate: 7.0,
+        banRate: 3.0,
+        avatar: '⚡'
+      },
+      'cirrus': {
+        id: 'cirrus',
+        nameEn: 'Cirrus',
+        nameEnAlt: null,
+        nameCn: '云缨',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'A',
+        difficulty: 3,
+        winRate: 51.5,
+        pickRate: 13.0,
+        banRate: 10.0,
+        avatar: '☁️'
+      },
+      'mayene': {
+        id: 'mayene',
+        nameEn: 'Mayene',
+        nameEnAlt: null,
+        nameCn: '梦奇',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 49.5,
+        pickRate: 5.0,
+        banRate: 1.0,
+        avatar: '🎪'
+      },
+      'fuzi': {
+        id: 'fuzi',
+        nameEn: 'Fuzi',
+        nameEnAlt: null,
+        nameCn: '夫子',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.6,
+        pickRate: 4.0,
+        banRate: 1.0,
+        avatar: '📚'
+      },
+      'mozi': {
+        id: 'mozi',
+        nameEn: 'Mozi',
+        nameEnAlt: null,
+        nameCn: '墨子',
+        role: 'Fighter',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.4,
+        pickRate: 4.0,
+        banRate: 1.0,
+        avatar: '🔧'
+      },
+      'direnjie': {
+        id: 'direnjie',
+        nameEn: 'Di Renjie',
+        nameEnAlt: null,
+        nameCn: '狄仁杰',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'C',
+        difficulty: 1,
+        winRate: 48.7,
+        pickRate: 5.0,
+        banRate: 1.0,
+        avatar: '🕵️'
+      },
+      'lianpo': {
+        id: 'lianpo',
+        nameEn: 'Lian Po',
+        nameEnAlt: null,
+        nameCn: '廉颇',
+        role: 'Tank',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.0,
+        pickRate: 5.0,
+        banRate: 2.0,
+        avatar: '🛡️'
+      },
+      'mengtian': {
+        id: 'mengtian',
+        nameEn: 'Meng Tian',
+        nameEnAlt: null,
+        nameCn: '蒙恬',
+        role: 'Tank',
+        primaryLane: 'Baron',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.8,
+        pickRate: 6.0,
+        banRate: 3.0,
+        avatar: '⚔️'
+      },
+      'butterfly': {
+        id: 'butterfly',
+        nameEn: 'Butterfly',
+        nameEnAlt: null,
+        nameCn: '露娜（蝶）',
+        role: 'Assassin',
+        primaryLane: 'Jungle',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.9,
+        pickRate: 6.0,
+        banRate: 3.0,
+        avatar: '🦋'
+      },
+      'umbrosa': {
+        id: 'umbrosa',
+        nameEn: 'Umbrosa',
+        nameEnAlt: null,
+        nameCn: '百里守约（影）',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 3,
+        winRate: 49.7,
+        pickRate: 7.0,
+        banRate: 4.0,
+        avatar: '🎯'
+      },
+      'menki': {
+        id: 'menki',
+        nameEn: 'Menki',
+        nameEnAlt: null,
+        nameCn: '蒙犽',
+        role: 'Marksman',
+        primaryLane: 'Farm',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 2,
+        winRate: 49.8,
+        pickRate: 6.0,
+        banRate: 2.0,
+        avatar: '🎯'
+      },
+      'ming': {
+        id: 'ming',
+        nameEn: 'Ming',
+        nameEnAlt: null,
+        nameCn: '明世隐',
+        role: 'Support',
+        primaryLane: 'Roam',
+        viableLanes: [],
+        tier: 'B',
+        difficulty: 1,
+        winRate: 50.2,
+        pickRate: 4.0,
+        banRate: 2.0,
+        avatar: '🔗'
+      }
+    }
+    
+    let selectedRole = null;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      populateEnemyDropdowns();
+      console.log('✅ Draft loaded:', Object.keys(HEROES).length, 'heroes');
+    });
+    
+    function populateEnemyDropdowns() {
+      ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5'].forEach(id => {
+        const select = document.getElementById(id);
+        Object.values(HEROES).forEach(hero => {
+          const opt = document.createElement('option');
+          opt.value = hero.id;
+          opt.textContent = hero.nameEn + ' (' + hero.role + ')';
+          select.appendChild(opt);
+        });
+      });
+    }
+    
+    function selectRole(role) {
+      selectedRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      const container = document.getElementById('your-hero-select');
+      const roleHeroes = Object.values(HEROES).filter(h => h.role === role);
+      
+      const select = document.createElement('select');
+      select.className = 'hero-select';
+      
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'Choose your ' + role;
+      select.appendChild(opt);
+      
+      roleHeroes.forEach(hero => {
+        const opt = document.createElement('option');
+        opt.value = hero.id;
+        opt.textContent = hero.nameEn + ' (' + hero.tier + ')';
+        select.appendChild(opt);
+      });
+      
+      container.innerHTML = '';
+      container.appendChild(select);
+      updateAnalysis();
+    }
+    
+    function updateAnalysis() {
+      const enemyIds = [];
+      ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5'].forEach(id => {
+        const val = document.getElementById(id).value;
+        if (val) enemyIds.push(val);
+      });
+      
+      const container = document.getElementById('suggestions');
+      
+      if (!selectedRole || enemyIds.length === 0) {
+        container.innerHTML = '<h4 style="color: #10b981;">💡 Select role and pick enemies</h4>';
+        return;
+      }
+      
+      // Get suggestions
+      const suggestions = getCounterSuggestions(selectedRole, enemyIds);
+      
+      if (suggestions.length === 0) {
+        container.innerHTML = '<h4 style="color: #10b981;">💡 No counters found</h4>';
+        return;
+      }
+      
+      let html = '<h4 style="color: #10b981;">💡 Top Suggestions</h4>';
+      suggestions.slice(0, 5).forEach((s, i) => {
+        const hero = HEROES[s.id];
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⭐';
+        html += '<div style="background: rgba(51,65,85,0.6); padding: 10px; margin: 8px 0; border-radius: 8px;">';
+        html += medal + ' <strong>' + hero.nameEn + '</strong> (Score: ' + s.score + ')';
+        html += '</div>';
+      });
+      
+      container.innerHTML = html;
+      
+      // Also show build advice
+      analyzeBuildAdvice(enemyIds);
+    }
+    
+    function getCounterSuggestions(role, enemyIds) {
+      const roleHeroes = Object.values(HEROES).filter(h => h.role === role);
+      
+      const scored = roleHeroes.map(hero => {
+        let score = 0;
+        
+        if (hero.counters) {
+          Object.keys(hero.counters).forEach(lane => {
+            const laneCounters = hero.counters[lane];
+            if (laneCounters && laneCounters.strong) {
+              laneCounters.strong.forEach(cid => {
+                if (enemyIds.includes(cid)) score += 3;
+              });
+            }
+          });
+        }
+        
+        if (hero.tier === 'S') score += 2;
+        if (hero.tier === 'A') score += 1;
+        
+        return { id: hero.id, score: score };
+      });
+      
+      scored.sort((a, b) => b.score - a.score);
+      return scored.filter(s => s.score > 0);
+    }
+  
+    
+    function analyzeBuildAdvice(enemyIds) {
+      if (!selectedRole || enemyIds.length === 0) {
+        document.getElementById('build-advice').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('build-advice').style.display = 'block';
+      
+      const enemies = enemyIds.map(id => HEROES[id]).filter(h => h);
+      const warnings = [];
+      
+      // Detect healers
+      const healers = ['caiyan', 'yao', 'dolia', 'ming', 'guiguzi', 'daqiao'];
+      const enemyHealers = enemies.filter(e => healers.includes(e.id));
+      
+      if (enemyHealers.length >= 2) {
+        warnings.push({
+          title: '❗❗ MULTIPLE HEALERS (' + enemyHealers.length + ')',
+          advice: 'RUSH ANTI-HEAL IN FIRST 2 ITEMS!',
+          items: ['Deadly Blade', 'Nightmare Touch']
+        });
+      } else if (enemyHealers.length === 1) {
+        warnings.push({
+          title: '❗ HEALER DETECTED',
+          advice: 'Get Anti-Heal Item',
+          items: ['Deadly Blade (Physical)', 'Nightmare Touch (Magical)']
+        });
+      }
+      
+      // Detect multiple tanks
+      const tanks = enemies.filter(e => e.role === 'Tank');
+      if (tanks.length >= 2) {
+        warnings.push({
+          title: '❗ MULTIPLE TANKS (' + tanks.length + ')',
+          advice: 'Stack Penetration',
+          items: ['Void Staff', 'Shadow Tomahawk', 'Armor Breaker']
+        });
+      }
+      
+      // Detect multiple mages
+      const mages = enemies.filter(e => e.role === 'Mage');
+      if (mages.length >= 2) {
+        warnings.push({
+          title: '❗ MULTIPLE MAGES (' + mages.length + ')',
+          advice: 'Build Magic Defense',
+          items: ['Athena Buckler', 'Witch Cape']
+        });
+      }
+      
+      // Detect multiple assassins
+      const assassins = enemies.filter(e => e.role === 'Assassin');
+      if (assassins.length >= 2) {
+        warnings.push({
+          title: '❗ MULTIPLE ASSASSINS (' + assassins.length + ')',
+          advice: 'Get Armor + HP Early',
+          items: ['Guardian Armor', 'Thornmail']
+        });
+      }
+      
+      // Display warnings
+      const container = document.getElementById('build-content');
+      
+      if (warnings.length === 0) {
+        container.innerHTML = '<p style="color: #94a3b8;">No specific threats. Build standard items for your role.</p>';
+        return;
+      }
+      
+      let html = '';
+      warnings.forEach(w => {
+        html += '<div style="background: rgba(239,68,68,0.15); padding: 10px; margin: 8px 0; border-radius: 8px; border-left: 3px solid #ef4444;">';
+        html += '<div style="color: #ef4444; font-weight: 600;">' + w.title + '</div>';
+        html += '<div style="color: #e2e8f0; margin-top: 4px;">→ ' + w.advice + '</div>';
+        if (w.items) {
+          html += '<div style="margin-top: 6px;">';
+          w.items.forEach(item => {
+            html += '<span style="background: rgba(239,68,68,0.2); padding: 3px 8px; margin-right: 5px; border-radius: 6px; font-size: 0.85rem; color: #fca5a5;">' + item + '</span>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+      
+      container.innerHTML = html;
+    }
+
+  </script>
+</body>
+</html>
