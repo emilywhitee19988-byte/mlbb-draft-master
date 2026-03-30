@@ -2069,11 +2069,17 @@
     // Render all tiers
     function renderAllTiers() {
       const container = document.getElementById('tier-container');
+      if (!container) {
+        console.error('tier-container not found!');
+        return;
+      }
       container.innerHTML = '';
       
       ['S', 'A', 'B', 'C'].forEach(tier => {
         const section = createTierSection(tier);
         container.appendChild(section);
+        // NOW call renderTier after section is in DOM
+        renderTier(tier);
       });
     }
 
@@ -2106,7 +2112,7 @@
         <div class="tier-content" id="tier-${tier.toLowerCase()}-content"></div>
       `;
       
-      renderTier(tier);
+      // Don't call renderTier here - element not in DOM yet!
       return section;
     }
 
