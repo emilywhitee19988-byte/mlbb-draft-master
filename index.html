@@ -2395,10 +2395,15 @@
     
     // Initialize draft simulator
     function initDraft() {
-      console.log('🎮 Initializing draft simulator');
+      try {
+        console.log('🎮 Initializing draft simulator');
       
       // Create role buttons
       var roleContainer = document.getElementById('role-buttons');
+      if (!roleContainer) {
+        console.error('role-buttons element not found');
+        return;
+      }
       var roles = ['Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
       
       roles.forEach(function(role) {
@@ -2413,6 +2418,10 @@
       populateEnemyDropdowns();
       
       console.log('✅ Draft initialized with ' + Object.keys(DRAFT_HEROES).length + ' heroes');
+      } catch(error) {
+        console.error('❌ Draft initialization error:', error);
+        console.error('Error details:', error.message, error.stack);
+      }
     }
     
     // Select role
@@ -2437,6 +2446,10 @@
     // Show hero select dropdown
     function showHeroSelect(role) {
       var container = document.getElementById('your-hero-select');
+      if (!container) {
+        console.error('your-hero-select element not found');
+        return;
+      }
       
       // Get heroes for this role
       var roleHeroes = [];
@@ -2514,6 +2527,10 @@
     // Show counter suggestions
     function showCounterSuggestions(role, enemyIds) {
       var container = document.getElementById('counter-suggestions');
+      if (!container) {
+        console.error('counter-suggestions element not found');
+        return;
+      }
       
       // Get suggestions
       var suggestions = getCounterSuggestions(role, enemyIds);
@@ -2597,6 +2614,10 @@
     // Show build advice
     function showBuildAdvice(role, enemyIds) {
       var container = document.getElementById('build-advice');
+      if (!container) {
+        console.error('build-advice element not found');
+        return;
+      }
       var analysis = analyzeEnemyComp(enemyIds);
       
       var html = '<h4 style="color: #fbbf24; margin-bottom: 12px;">⚔️ Build Advice</h4>';
